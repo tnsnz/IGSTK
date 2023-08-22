@@ -371,7 +371,7 @@ void ToolProjectionObjectRepresentation
   m_LineProperty->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
 
   vtkPolyDataMapper* lineMapper = vtkPolyDataMapper::New();
-  lineMapper->SetInput ( m_LineSource->GetOutput() );
+  lineMapper->SetInputData ( m_LineSource->GetOutput() );
   lineMapper->SetResolveCoincidentTopologyToPolygonOffset();
   lineMapper->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
 

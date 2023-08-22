@@ -9,9 +9,9 @@
   Copyright (c) ISC  Insight Software Consortium.  All rights reserved.
   See IGSTKCopyright.txt or http://www.igstk.org/copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+	 This software is distributed WITHOUT ANY WARRANTY; without even
+	 the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+	 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
 
@@ -20,60 +20,61 @@
 
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
-#include <itkCylinderSpatialObject.h>
+//#include <itkCylinderSpatialObject.h>
+#include <itkTubeSpatialObject.h>
 
 namespace igstk
 {
 
-/** \class CylinderObject
- * 
- * \brief This class represents a cylinder object. The parameters of the 
- * object are the height of the object, and the radius. 
- * Default representation axis is X.
- * 
- * \ingroup Object
- */
+	/** \class CylinderObject
+	 *
+	 * \brief This class represents a cylinder object. The parameters of the
+	 * object are the height of the object, and the radius.
+	 * Default representation axis is X.
+	 *
+	 * \ingroup Object
+	 */
 
-class CylinderObject 
-: public SpatialObject
-{
+	class CylinderObject
+		: public SpatialObject
+	{
 
-public:
+	public:
 
-  /** Macro with standard traits declarations. */
-  igstkStandardClassTraitsMacro( CylinderObject, SpatialObject )
+		/** Macro with standard traits declarations. */
+		igstkStandardClassTraitsMacro(CylinderObject, SpatialObject)
 
-public:
+	public:
 
-  /** Typedefs */
-  typedef itk::CylinderSpatialObject     CylinderSpatialObjectType;
+		/** Typedefs */
+		typedef itk::TubeSpatialObject<3> CylinderSpatialObjectType;
 
-  /** Set the radius of the Cylinder */
-  void SetRadius( double radius );
-  
-  /** Get the radius of the Cylinder */
-  double GetRadius() const;
-  
-  /** Set the height of the Cylinder */
-  void SetHeight( double height );
-  
-  /** Get the height of the Cylinder */
-  double GetHeight() const;
-  
-protected:
+		/** Set the radius of the Cylinder */
+		void SetRadius(double radius);
 
-  CylinderObject( void );
-  ~CylinderObject( void );
+		/** Get the radius of the Cylinder */
+		double GetRadius() const;
 
-  /** Print object information */
-  virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
+		/** Set the height of the Cylinder */
+		void SetHeight(double height);
 
-private:
+		/** Get the height of the Cylinder */
+		double GetHeight() const;
 
-  /** Internal itkSpatialObject */
-  CylinderSpatialObjectType::Pointer   m_CylinderSpatialObject;
+	protected:
 
-};
+		CylinderObject(void);
+		~CylinderObject(void);
+
+		/** Print object information */
+		virtual void PrintSelf(std::ostream& os, itk::Indent indent) const;
+
+	private:
+
+		/** Internal itkSpatialObject */
+		itk::TubeSpatialObject<3>::Pointer   m_CylinderSpatialObject;
+
+	};
 
 } // end namespace igstk
 

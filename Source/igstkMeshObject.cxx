@@ -71,7 +71,9 @@ bool MeshObject::AddTriangleCell(unsigned int id,
   trianglePoints[0]=vertex1;
   trianglePoints[1]=vertex2;
   trianglePoints[2]=vertex3;
-  cell->SetPointIds(trianglePoints);
+  //cell->SetPointIds(trianglePoints);
+  auto castedPoints = reinterpret_cast<CellTraits::PointIdConstIterator>(trianglePoints);
+  cell->SetPointIds(castedPoints);
   m_Mesh->SetCell(id, cell );
 
   return true;
@@ -92,7 +94,9 @@ bool MeshObject::AddTetrahedronCell(unsigned int id,
   tetraPoints[1]=vertex2;
   tetraPoints[2]=vertex3;
   tetraPoints[3]=vertex4;
-  cell->SetPointIds(tetraPoints);
+  //cell->SetPointIds(tetraPoints);
+  auto castedPoints = reinterpret_cast<CellTraits::PointIdConstIterator>(tetraPoints);
+  cell->SetPointIds(castedPoints);
   m_Mesh->SetCell(id, cell );
 
   return true;

@@ -550,8 +550,7 @@ TARGET_LINK_LIBRARIES( IGSTK
     ITKIONIFTI
     ITKIONRRD
     ITKIOGIPL
-    vtkRendering vtkGraphics vtkHybrid vtkImaging 
-    vtkIO vtkFiltering vtkCommon vtksys
+    vtkRenderingOpenGL2 vtkRenderingFreeType vtkInteractionStyle vtksys
     ${EXTRA_LIBS}
 )
 

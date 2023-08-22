@@ -48,8 +48,11 @@ QTWidget::
 QTWidget(QWidget* qparent, const char* name, Qt::WFlags f):
 QVTKWidget( qparent, name, f ), m_StateMachine(this), m_ProxyView(this)
 #else
-//! constructor for Qt 4
-QTWidget(QWidget* qparent, Qt::WFlags f):
+////! constructor for Qt 4
+//QTWidget(QWidget* qparent, Qt::WFlags f):
+
+    //! constructor for Qt 5
+    QTWidget(QWidget* qparent, Qt::WindowFlags f) :
 QVTKWidget( qparent, f ), m_StateMachine(this), m_ProxyView(this)
 #endif
 { 

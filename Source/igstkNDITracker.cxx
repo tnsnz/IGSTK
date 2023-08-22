@@ -37,7 +37,7 @@ NDITracker::NDITracker(void):m_StateMachine(this)
   this->SetThreadingEnabled( true );
 
   m_BaudRate = CommunicationType::BaudRate115200; 
-  m_BufferLock = itk::MutexLock::New();
+  //m_BufferLock = itk::MutexLock::New();
 }
 
 /** Destructor */
@@ -318,11 +318,13 @@ NDITracker::ResultType NDITracker::InternalUpdateStatus()
     transform.SetTranslationAndRotation(translation, rotation, errorValue,
                                         this->GetValidityTime());
   
-    m_BufferLock->Lock();
+    //m_BufferLock->Lock();
+    m_BufferLock.lock();
     // set the raw transform
     this->SetTrackerToolRawTransform( trackerToolContainer[portId], transform );
     this->SetTrackerToolTransformUpdate( trackerToolContainer[portId], true );
-    m_BufferLock->Unlock();
+    //m_BufferLock->Unlock();
+    m_BufferLock.unlock();
 
     ++inputItr;
     }
@@ -343,7 +345,8 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
   ResultType result = this->CheckError(m_CommandInterpreter);
 
   // lock the buffer
-  m_BufferLock->Lock();
+  //m_BufferLock->Lock();
+  m_BufferLock.lock();
 
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
@@ -409,7 +412,8 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
   // point in the code to see if any new tools had been plugged in
 
   // unlock the buffer
-  m_BufferLock->Unlock();
+  //m_BufferLock->Unlock();
+  m_BufferLock.unlock();
 
   return result;
 }

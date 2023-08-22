@@ -21,9 +21,13 @@
 #include <vector>
 #include <map>
 
-#include "itkMutexLock.h"
-#include "itkConditionVariable.h"
-#include "itkMultiThreader.h"
+//#include "itkMutexLock.h"
+#include <mutex>
+//#include "itkConditionVariable.h"
+#include <condition_variable>
+
+//#include "itkMultiThreader.h"
+#include "itkPlatformMultiThreader.h"
 
 #include "igstkObject.h"
 #include "igstkStateMachine.h"
@@ -311,18 +315,20 @@ private:
   bool                                m_TrackingThreadStarted;
 
   /** itk::MultiThreader object pointer */
-  itk::MultiThreader::Pointer     m_Threader;
+  itk::PlatformMultiThreader::Pointer     m_Threader;
 
   /** Tracking ThreadID */
   int                             m_ThreadID;
 
   /** itk::ConditionVariable object pointer to signal for the next
    *  transform */
-  itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
+  //itk::ConditionVariable::Pointer m_ConditionNextTransformReceived;
+  std::condition_variable m_ConditionNextTransformReceived;
   
   /** itk::SimpleMutexLock object to be used for
       m_ConditionNextTransformReceived */
-  itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
+  //itk::SimpleMutexLock            m_LockForConditionNextTransformReceived;
+  std::mutex m_LockForConditionNextTransformReceived;
 
   /** List of States */
   igstkDeclareStateMacro( Idle );
@@ -357,7 +363,7 @@ private:
   ResultType RequestRemoveTool( TrackerToolType * trackerTool );
 
   /** Thread function for tracking */
-  static ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
+  static itk::ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
 
   /** The "UpdateStatus" method is used for updating the status of 
       tools when the tracker is in tracking state. It is a callback

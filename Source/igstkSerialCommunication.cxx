@@ -675,6 +675,10 @@ void SerialCommunication::PrintSelf( std::ostream& os,
 {
   Superclass::PrintSelf(os, indent);
 
+  std::stringstream ss;
+  ss << m_CaptureFileStream.rdbuf();
+  std::string captureFileStreamStr = ss.str();
+
   os << indent << "PortNumber: " << m_PortNumber << std::endl;
   os << indent << "BaudRate: " << m_BaudRate << std::endl;
   os << indent << "DataBits: " << m_DataBits << std::endl;
@@ -684,7 +688,8 @@ void SerialCommunication::PrintSelf( std::ostream& os,
 
   os << indent << "Capture: " << m_Capture << std::endl;
   os << indent << "CaptureFileName: " << m_CaptureFileName << std::endl;
-  os << indent << "CaptureFileStream: " << m_CaptureFileStream << std::endl;
+  //os << indent << "CaptureFileStream: " << m_CaptureFileStream << std::endl;
+  os << indent << "CaptureFileStream: " << captureFileStreamStr << std::endl;
   os << indent << "CaptureMessageNumber: " << m_CaptureMessageNumber
      << std::endl;
 }

@@ -150,7 +150,7 @@ void ConeObjectRepresentation::CreateActors()
                                          this->GetBlue()); 
         
   coneActor->GetProperty()->SetOpacity(this->GetOpacity()); 
-  coneMapper->SetInput(m_ConeSource->GetOutput());
+  coneMapper->SetInputData(m_ConeSource->GetOutput());
   coneActor->SetMapper( coneMapper );
 
   // We align the actor in the Z direction such that the top of

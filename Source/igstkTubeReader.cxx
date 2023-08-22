@@ -56,7 +56,7 @@ void TubeReader::AttemptReadObjectProcessing()
 
   while( it != children->end() )
     {
-    if( !strcmp((*it)->GetTypeName(),"TubeSpatialObject") )
+    if( !strcmp((*it)->GetTypeName().c_str(), "TubeSpatialObject") )
       {
       TubeSpatialObjectType * tube = 
               dynamic_cast< TubeSpatialObjectType * >( it->GetPointer() );

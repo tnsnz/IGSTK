@@ -187,7 +187,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( m_MapColors )
     {
     m_MapColors->SetLookupTable( NULL );
-    m_MapColors->SetInput( NULL );
+    m_MapColors->SetInputData( NULL );
     m_MapColors->Delete();
     m_MapColors = NULL;
     }
@@ -306,7 +306,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     
     int ext[6];
 
-    m_ImageData->Update();
+    //m_ImageData->Update();
     m_ImageData->GetExtent( ext );
 
     switch( m_Orientation )
@@ -426,9 +426,10 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
     if( this->m_ImageData )
       {
-      this->m_ImageData->Update();
+      //update function asynchronized call
+      //this->m_ImageData->Update();
       }
-    this->m_MapColors->SetInput( this->m_ImageData );
+    this->m_MapColors->SetInputData( this->m_ImageData );
     }
 
   this->m_ImageTransformObserver->Reset();
@@ -452,7 +453,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     imageTransformMatrix->Delete();
     }
 
-  this->m_ImageActor->SetInput( this->m_MapColors->GetOutput() );
+  this->m_ImageActor->SetInputData( this->m_MapColors->GetOutput() );
 }
 
 
@@ -477,7 +478,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
                        ::UpdateRepresentationProcessing called...\n");
   if( m_ImageData )
     {
-    m_MapColors->SetInput( m_ImageData );
+    m_MapColors->SetInputData( m_ImageData );
     }
 }
 
@@ -563,7 +564,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
 {
   int ext[6];
 
-  m_ImageData->Update();
+  //m_ImageData->Update();
   m_ImageData->GetExtent( ext );
 
   EventHelperType::IntegerBoundsType bounds;
@@ -614,8 +615,8 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
-  m_MapColors->SetInput( m_ImageData );
-  m_ImageActor->SetInput( m_MapColors->GetOutput() );
+  m_MapColors->SetInputData( m_ImageData );
+  m_ImageActor->SetInputData( m_MapColors->GetOutput() );
   m_ImageActor->InterpolateOn();
 }
 

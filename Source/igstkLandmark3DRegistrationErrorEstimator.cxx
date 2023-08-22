@@ -29,6 +29,7 @@
 
 #include "vnl/algo/vnl_real_eigensystem.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
+#include "../../ITK/Modules/ThirdParty/VNL/src/vxl/vcl/vcl_legacy_aliases.h"
 
 namespace igstk
 {

@@ -113,7 +113,8 @@ private:
   void operator=(const Self&);   //purposely not implemented
 
   /** A mutex for multithreaded access to the buffer arrays */
-  ::itk::MutexLock::Pointer  m_BufferLock;
+  //::itk::MutexLock::Pointer  m_BufferLock;
+  std::mutex m_BufferLock;
 
   /** The "Communication" instance */
   CommunicationType::Pointer       m_Communication;

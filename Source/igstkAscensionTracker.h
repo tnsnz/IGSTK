@@ -137,7 +137,8 @@ private:
   CommandInterpreterType::Pointer  m_CommandInterpreter;
 
   /** A mutex for multithreaded access to the transform buffer */
-  itk::MutexLock::Pointer  m_BufferLock;  
+  //itk::MutexLock::Pointer  m_BufferLock;  
+  std::mutex  m_BufferLock;
 
   /** The buffers for holding tool transforms */
   //TransformType m_TransformBuffer[NumberOfPorts];

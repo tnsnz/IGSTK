@@ -146,14 +146,14 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sample->CappingOn();
    
   vtkMarchingContourFilter* surface = vtkMarchingContourFilter::New();
-  surface->SetInput((vtkDataObject*)(sample->GetOutput()));
+  surface->SetInputData((vtkDataObject*)(sample->GetOutput()));
   surface->SetValue(0,0.0);
   surface->ComputeScalarsOff();
 
   tipActor->GetProperty()->SetColor(1.0,1.0,1.0); 
   tipActor->GetProperty()->SetOpacity(this->GetOpacity()); 
     
-  tipMapper->SetInput(surface->GetOutput());
+  tipMapper->SetInputData(surface->GetOutput());
   tipActor->SetMapper( tipMapper );
 
   this->AddActor( tipActor );
@@ -188,14 +188,14 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sampleBlack->ComputeNormalsOff();
    
   vtkMarchingContourFilter* surfaceBlack = vtkMarchingContourFilter::New();
-  surfaceBlack->SetInput((vtkDataObject*)(sampleBlack->GetOutput()));
+  surfaceBlack->SetInputData((vtkDataObject*)(sampleBlack->GetOutput()));
   surfaceBlack->SetValue(0,0.0);
   surfaceBlack->ComputeScalarsOff();
 
   tipBlackActor->GetProperty()->SetColor(0.0,0.0,0.0); 
   tipBlackActor->GetProperty()->SetOpacity(this->GetOpacity()); 
     
-  tipBlackMapper->SetInput(surfaceBlack->GetOutput());
+  tipBlackMapper->SetInputData(surfaceBlack->GetOutput());
   tipBlackActor->SetMapper( tipBlackMapper );
 
   this->AddActor( tipBlackActor );
@@ -236,14 +236,14 @@ void UltrasoundProbeObjectRepresentation::CreateActors()
   sampleHandle->CappingOn();
    
   vtkMarchingContourFilter* surfaceHandle = vtkMarchingContourFilter::New();
-  surfaceHandle->SetInput((vtkDataObject*)(sampleHandle->GetOutput()));
+  surfaceHandle->SetInputData((vtkDataObject*)(sampleHandle->GetOutput()));
   surfaceHandle->SetValue(0,0.0);
   surfaceHandle->ComputeScalarsOff();
 
   handleActor->GetProperty()->SetColor(1.0,1.0,1.0); 
   handleActor->GetProperty()->SetOpacity(this->GetOpacity()); 
     
-  handleMapper->SetInput(surfaceHandle->GetOutput());
+  handleMapper->SetInputData(surfaceHandle->GetOutput());
   handleActor->SetMapper( handleMapper );
 
   this->AddActor( handleActor );

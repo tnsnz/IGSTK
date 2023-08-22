@@ -22,6 +22,7 @@
 #include "igstkObject.h"
 #include "igstkMacros.h"
 #include "igstkStateMachine.h"
+#include <mutex>
 
 
 namespace igstk
@@ -183,9 +184,10 @@ private:
 
   static unsigned int m_FreeTimeoutCount;
 
-  static unsigned int m_NumberOfPulseGenerators;
+  static unsigned int numberOfPulseGenerators;
 
-  mutable itk::SimpleFastMutexLock m_NumberOfPulseGeneratorsLock;
+  //mutable itk::SimpleFastMutexLock m_NumberOfPulseGeneratorsLock;
+  mutable std::mutex numberOfPulseGeneratorsLocker;
 
   static char         m_ResetClock;
   

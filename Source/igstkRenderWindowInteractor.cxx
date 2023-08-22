@@ -26,7 +26,6 @@
 
 namespace igstk {
 
-vtkCxxRevisionMacro (RenderWindowInteractor, "1.4");
 vtkStandardNewMacro (RenderWindowInteractor);
 
 

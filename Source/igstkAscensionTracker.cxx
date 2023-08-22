@@ -33,7 +33,7 @@ AscensionTracker::AscensionTracker(void):m_StateMachine(this)
 
   this->SetThreadingEnabled( true );
 
-  m_BufferLock = itk::MutexLock::New();
+  //m_BufferLock = itk::MutexLock::New();
   m_Communication = 0;
   m_CommandInterpreter = CommandInterpreterType::New();
   m_NumberOfTools = 0;
@@ -143,7 +143,8 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
   // A shared memory buffer is used to transfer information between
   // the threads, and it must be locked when either thread is
   // accessing it.
-  m_BufferLock->Lock();
+  //m_BufferLock->Lock();
+  m_BufferLock.lock();
 
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
 
@@ -235,7 +236,8 @@ AscensionTracker::ResultType AscensionTracker::InternalUpdateStatus()
 
     }
 
-  m_BufferLock->Unlock();
+  //m_BufferLock->Unlock();
+  m_BufferLock.unlock();
 
   return SUCCESS;
 }
@@ -255,7 +257,8 @@ AscensionTracker::InternalThreadedUpdateStatus( void )
   // not loosing samples (after the delay, the sensor movement is 
   // reproduced without jumps). It's like the serial port buffer is not flushed
 
-  m_BufferLock->Lock();
+  //m_BufferLock->Lock();
+  m_BufferLock.lock();
 
   typedef TrackerToolTransformContainerType::const_iterator  InputConstIterator;
   InputConstIterator inputItr = this->m_ToolTransformBuffer.begin();
@@ -304,7 +307,8 @@ AscensionTracker::InternalThreadedUpdateStatus( void )
     inputItr++;
     } 
 
-  m_BufferLock->Unlock();
+  //m_BufferLock->Unlock();
+  m_BufferLock.unlock();
 
   return SUCCESS;
 }

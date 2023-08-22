@@ -151,7 +151,7 @@ void BoxObjectRepresentation::CreateActors()
                                          this->GetBlue()); 
         
   boxActor->GetProperty()->SetOpacity(this->GetOpacity()); 
-  boxMapper->SetInput(m_BoxSource->GetOutput());
+  boxMapper->SetInputData(m_BoxSource->GetOutput());
   boxActor->SetMapper( boxMapper );
 
   // We should check if the actor doesn't exist

@@ -16,7 +16,8 @@
 =========================================================================*/
 
 #include "igstkToken.h"
-#include "itkFastMutexLock.h"
+//#include "itkFastMutexLock.h"
+#include <mutex>
 
 #include <iostream>
 
@@ -28,21 +29,22 @@ namespace igstk
 Token::IdentifierType Token::m_IdentifierCounter = 1;
 
 /** Used for mutex locking */
-static ::itk::SimpleFastMutexLock    TokenMutex;
+//static ::itk::SimpleFastMutexLock    TokenMutex;
+static std::mutex tokenMutex;
     
 /** Constructor */ 
 Token::Token()
 {
   /** Start mutual exclusion section. This prevent race conditions when
    * multiple threads are creating Tokens simultaneously */
-  TokenMutex.Lock();
+  tokenMutex.lock();
     
   /** When the IdentifierCounter rolls over (reaches it maximum value and
    * restars from zero) the Uniqueness of identifiers can no longer be
    * guaranted. */
   this->m_Identifier  = m_IdentifierCounter++;
 
-  TokenMutex.Unlock();
+  tokenMutex.unlock();
 }
 
 /** Destructor */

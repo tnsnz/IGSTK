@@ -24,7 +24,7 @@ namespace igstk
 { 
 
 /** Constructor */
-Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(NULL)
+Annotation2D::Annotation2D():m_StateMachine(this),m_Logger(nullptr)
 {
   igstkLogMacro( DEBUG, "Constructor() called ...\n");
   for (int i = 0; i < 4; i++)

@@ -209,7 +209,8 @@ public:
         return tool.GetPointer();
         }
       }
-    return NULL;
+    //return NULL;
+    return nullptr;
     }
 };
 

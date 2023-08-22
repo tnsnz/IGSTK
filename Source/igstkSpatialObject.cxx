@@ -129,7 +129,7 @@ SpatialObject
   igstkLogMacro( DEBUG, "SpatialObject::ReportBoundsProcessing() called....\n");
 
   BoundingBoxEvent  event;
-  event.Set( this->GetInternalSpatialObject()->GetBoundingBox() );
+  //event.Set( this->GetInternalSpatialObject()->GetBoundingBox() );
   this->InvokeEvent( event );
 }
 

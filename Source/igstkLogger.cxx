@@ -35,7 +35,7 @@ Logger::~Logger()
 
 bool 
 Logger::
-ShouldBuildMessage(PriorityLevelType level)
+ShouldBuildMessage(PriorityLevelEnum level)
 {
   if (this->GetPriorityLevel() >= level) 
     {

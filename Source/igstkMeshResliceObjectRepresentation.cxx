@@ -324,7 +324,7 @@ void MeshResliceObjectRepresentation
 
   polyData->SetPoints(polyPoints);
 
-  m_Cutter->SetInput(polyData);
+  m_Cutter->SetInputData(polyData);
   m_Cutter->SetCutFunction(m_Plane);
 
   vtkActor* contourActor = vtkActor::New();
@@ -336,7 +336,7 @@ void MeshResliceObjectRepresentation
                               this->GetGreen(),
                               this->GetBlue());
 
-  contourMapper->SetInput(m_Cutter->GetOutput());
+  contourMapper->SetInputData(m_Cutter->GetOutput());
   contourActor->SetMapper(contourMapper);
   contourActor->SetProperty(m_ContourProperty);
 

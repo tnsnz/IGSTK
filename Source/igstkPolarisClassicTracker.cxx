@@ -38,7 +38,7 @@ PolarisClassicTracker::PolarisClassicTracker(void):m_StateMachine(this)
   this->SetThreadingEnabled( true );
 
   m_BaudRate = CommunicationType::BaudRate115200;
-  m_BufferLock = itk::MutexLock::New();
+  //m_BufferLock = itk::MutexLock::New();
 }
 
 /** Destructor */
@@ -374,7 +374,8 @@ PolarisClassicTracker::ResultType PolarisClassicTracker::InternalUpdateStatus()
                                 //0000 0000 0001 0000 NDI_INITIALIZED
                                 //0000 0000 0010 0000 NDI_ENABLED
                                 //0000 0000 0011 0001 bit by bit OR
-  m_BufferLock->Lock();
+  //m_BufferLock->Lock();
+  m_BufferLock.lock();
 
   typedef PortHandleContainerType::const_iterator  ConstIteratorType;
 
@@ -468,7 +469,8 @@ PolarisClassicTracker::ResultType PolarisClassicTracker::InternalUpdateStatus()
 
     ++inputItr;
     }
-  m_BufferLock->Unlock();
+  //m_BufferLock->Unlock();
+  m_BufferLock.unlock();
 
   return SUCCESS;
 }
@@ -488,7 +490,8 @@ PolarisClassicTracker
   ResultType result = this->CheckError(m_CommandInterpreter);
 
   // lock the buffer
-  m_BufferLock->Lock();
+  //m_BufferLock->Lock();
+  m_BufferLock.lock();
 
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
@@ -556,7 +559,8 @@ PolarisClassicTracker
   // point in the code to see if any new tools had been plugged in
 
   // unlock the buffer
-  m_BufferLock->Unlock();
+  //m_BufferLock->Unlock();
+  m_BufferLock.unlock();
 return result;
 }
 

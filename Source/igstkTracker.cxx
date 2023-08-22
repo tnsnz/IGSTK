@@ -314,8 +314,7 @@ Tracker::Tracker(void) :  m_StateMachine( this )
   // By default, the reference is not used
   m_ApplyingReferenceTool = false;
 
-  m_ConditionNextTransformReceived = itk::ConditionVariable::New();
-  m_Threader = itk::MultiThreader::New();
+  m_Threader = itk::PlatformMultiThreader::New();
   m_ThreadingEnabled = false;
   m_TrackingThreadStarted = false;
 }
@@ -758,8 +757,10 @@ void Tracker::AttemptToUpdateStatusProcessing( void )
   // WaitForSingleObject() on Windows
   if ( this->GetThreadingEnabled() )
     {
-    m_ConditionNextTransformReceived->Wait( 
-      & m_LockForConditionNextTransformReceived );
+      //m_ConditionNextTransformReceived.Wait(
+      //    & m_LockForConditionNextTransformReceived );
+        std::unique_lock<std::mutex> lck(m_LockForConditionNextTransformReceived);
+        m_ConditionNextTransformReceived.wait(lck);
     }
   else
     {
@@ -1045,19 +1046,19 @@ Tracker::GetTrackerToolContainer() const
 }
 
 /** Thread function for tracking */
-ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
+itk::ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 {
-  struct itk::MultiThreader::ThreadInfoStruct * pInfo = 
-    (struct itk::MultiThreader::ThreadInfoStruct*)pInfoStruct;
+  struct itk::PlatformMultiThreader::WorkUnitInfo * pInfo = 
+    (struct itk::PlatformMultiThreader::WorkUnitInfo *)pInfoStruct;
 
   if( pInfo == NULL )
     {
-    return ITK_THREAD_RETURN_VALUE;
+    return ITK_THREAD_RETURN_DEFAULT_VALUE;
     }
 
   if( pInfo->UserData == NULL )
     {
-    return ITK_THREAD_RETURN_VALUE;
+    return ITK_THREAD_RETURN_DEFAULT_VALUE;
     }
 
   Tracker *pTracker = (Tracker*)pInfo->UserData;
@@ -1070,7 +1071,8 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
   while ( activeFlag )
     {
     ResultType result = pTracker->InternalThreadedUpdateStatus();
-    pTracker->m_ConditionNextTransformReceived->Signal();
+    //pTracker->m_ConditionNextTransformReceived->Signal();
+    pTracker->m_ConditionNextTransformReceived.notify_one();
     
     totalCount++;
     if (result != SUCCESS)
@@ -1079,16 +1081,16 @@ ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
       }
       
     // check to see if we are being told to quit 
-    pInfo->ActiveFlagLock->Lock();
+    pInfo->ActiveFlagLock->lock();
     activeFlag = *pInfo->ActiveFlag;
-    pInfo->ActiveFlagLock->Unlock();
+    pInfo->ActiveFlagLock->unlock();
     }
   
   igstkLogMacroStatic(pTracker, DEBUG, "TrackingThreadFunction was "
                       "terminated, " << errorCount << " errors "
                       "out of " << totalCount << "updates." << std::endl );
 
-  return ITK_THREAD_RETURN_VALUE;
+  return ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 /** Report to the tracker tool that the tool is not available */

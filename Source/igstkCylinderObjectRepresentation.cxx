@@ -141,7 +141,7 @@ void CylinderObjectRepresentation::CreateActors()
                                          this->GetBlue()); 
         
   cylinderActor->GetProperty()->SetOpacity(this->GetOpacity()); 
-  cylinderMapper->SetInput(m_CylinderSource->GetOutput());
+  cylinderMapper->SetInputData(m_CylinderSource->GetOutput());
   cylinderActor->SetMapper( cylinderMapper );
 
   // We align the actor in the Z direction such that the top of

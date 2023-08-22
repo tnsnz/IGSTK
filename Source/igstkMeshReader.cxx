@@ -47,7 +47,7 @@ void MeshReader::AttemptReadObjectProcessing()
 
   while(it != children->end())
     {
-    if(!strcmp((*it)->GetTypeName(),"MeshSpatialObject"))
+    if(!strcmp((*it)->GetTypeName().c_str(),"MeshSpatialObject"))
       {
       MeshObjectType::MeshSpatialObjectType* meshSO  = dynamic_cast<
                   MeshObjectType::MeshSpatialObjectType*>((*it).GetPointer());

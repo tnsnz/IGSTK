@@ -64,7 +64,7 @@ public:
   /** Returns true if the priority level of the message will cause
    *  the message to be written to a log.
    */
-  virtual bool ShouldBuildMessage(PriorityLevelType message_level);
+  virtual bool ShouldBuildMessage(PriorityLevelEnum message_level);
 
 protected:
 

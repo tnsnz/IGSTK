@@ -16,6 +16,7 @@
 =========================================================================*/
 
 #include "igstkTransform.h"
+#include "../../ITK/Modules/ThirdParty/VNL/src/vxl/vcl/vcl_legacy_aliases.h"
 
 
 namespace igstk

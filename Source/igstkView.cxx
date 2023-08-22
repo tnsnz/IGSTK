@@ -906,7 +906,7 @@ void View::SaveScreenShot()
 
   windowToImageFilter->Update();
 
-  writer->SetInput( windowToImageFilter->GetOutput() );
+  writer->SetInputData( windowToImageFilter->GetOutput() );
   
   writer->SetFileName( this->m_ScreenShotFileName.c_str() );
   
@@ -914,7 +914,7 @@ void View::SaveScreenShot()
   
   writer->Write();
 
-  writer->SetInput( NULL );
+  writer->SetInputData( NULL );
   windowToImageFilter->SetInput( NULL );
 
   windowToImageFilter->Delete();

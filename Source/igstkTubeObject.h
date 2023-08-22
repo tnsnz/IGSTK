@@ -53,7 +53,7 @@ public:
   /** Internal typedef */
   typedef itk::TubeSpatialObject<3>             TubeSpatialObjectType;
   typedef TubeSpatialObjectType::TubePointType  PointType;
-  typedef TubeSpatialObjectType::PointListType  PointListType;
+  typedef TubeSpatialObjectType::TubePointListType  PointListType;
 
   /** Add a point to the tube */
   void AddPoint(PointType & point);

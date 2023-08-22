@@ -87,8 +87,11 @@ public:
     QTWidget(QWidget* qparent = NULL,
              const char* name = NULL, Qt::WFlags f = 0);
 #else
-    //! constructor for Qt 4
-    QTWidget(QWidget* parent = NULL, Qt::WFlags f = 0);
+    ////! constructor for Qt 4
+    //QTWidget(QWidget* parent = NULL, Qt::WFlags f = 0);
+
+  //! constructor for Qt 5
+  QTWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
 #endif
 
   /** Destructor */

@@ -38,7 +38,7 @@ public:
 
   static RenderWindowInteractor * New();
 
-  vtkTypeRevisionMacro(RenderWindowInteractor,vtkRenderWindowInteractor);
+  vtkTypeMacro(RenderWindowInteractor,vtkRenderWindowInteractor);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void Initialize();

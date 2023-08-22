@@ -146,12 +146,12 @@ void TubeObjectRepresentation::CreateActors()
 
   const TubeObjectType::PointType* pt = m_TubeSpatialObject->GetPoint(0); 
   vtkSphereSource * sphereSource1 = vtkSphereSource::New();
-  sphereSource1->SetCenter((float)(pt->GetPosition()[0]*spacing[0]), 
-                           (float)(pt->GetPosition()[1]*spacing[1]), 
-                           (float)(pt->GetPosition()[2]*spacing[2]));
-  sphereSource1->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  sphereSource1->SetCenter((float)(pt->GetPositionInObjectSpace()[0]*spacing[0]), 
+                           (float)(pt->GetPositionInObjectSpace()[1]*spacing[1]),
+                           (float)(pt->GetPositionInObjectSpace()[2]*spacing[2]));
+  sphereSource1->SetRadius(pt->GetRadiusInObjectSpace()*0.95*spacing[0]);
   vtkPolyDataMapper *sphereMapper1 = vtkPolyDataMapper::New();
-  sphereMapper1->SetInput(sphereSource1->GetOutput());
+  sphereMapper1->SetInputData(sphereSource1->GetOutput());
   
   vtkActor* sphere1 = vtkActor::New();
   sphere1->SetMapper(sphereMapper1);
@@ -169,22 +169,22 @@ void TubeObjectRepresentation::CreateActors()
   for( unsigned int i=0; i < nPoints; i++ )
     {
     const TubeObjectType::PointType* point = m_TubeSpatialObject->GetPoint(i);
-    vPoints->SetPoint(i, (float)(point->GetPosition()[0]*spacing[0]),
-                         (float)(point->GetPosition()[1]*spacing[1]),
-                         (float)(point->GetPosition()[2]*spacing[2]));
-    vScalars->SetTuple1(i,point->GetRadius()*0.95*spacing[0]);
-    vVectors->SetTuple3(i,point->GetRadius()*0.95*spacing[0],0,0);
+    vPoints->SetPoint(i, (float)(point->GetPositionInObjectSpace()[0]*spacing[0]),
+                         (float)(point->GetPositionInObjectSpace()[1]*spacing[1]),
+                         (float)(point->GetPositionInObjectSpace()[2]*spacing[2]));
+    vScalars->SetTuple1(i,point->GetRadiusInObjectSpace()*0.95*spacing[0]);
+    vVectors->SetTuple3(i,point->GetRadiusInObjectSpace()*0.95*spacing[0],0,0);
     }  
 
   pt = m_TubeSpatialObject->GetPoint(nPoints-1); 
   vtkSphereSource * sphereSource2 = vtkSphereSource::New();
-  sphereSource2->SetCenter((float)(pt->GetPosition()[0]*spacing[0]),  
-                           (float)(pt->GetPosition()[1]*spacing[1]), 
-                           (float)(pt->GetPosition()[2]*spacing[2]));
-  sphereSource2->SetRadius(pt->GetRadius()*0.95*spacing[0]);
+  sphereSource2->SetCenter((float)(pt->GetPositionInObjectSpace()[0]*spacing[0]),
+                           (float)(pt->GetPositionInObjectSpace()[1]*spacing[1]),
+                           (float)(pt->GetPositionInObjectSpace()[2]*spacing[2]));
+  sphereSource2->SetRadius(pt->GetRadiusInObjectSpace()*0.95*spacing[0]);
   
   vtkPolyDataMapper *sphereMapper2 = vtkPolyDataMapper::New();
-  sphereMapper2->SetInput(sphereSource2->GetOutput());
+  sphereMapper2->SetInputData(sphereSource2->GetOutput());
   
   vtkActor* sphere2 = vtkActor::New();
   sphere2->SetMapper(sphereMapper2);
@@ -226,7 +226,8 @@ void TubeObjectRepresentation::CreateActors()
   vtkPolyData* vPData = vtkPolyData::New();
   vPData->SetLines(vCA);
   vPData->SetPoints(vPoints);
-  vtkFloatingPointType range[2];
+  //vtkFloatingPointType range[2];
+  double range[2];
   float min_scalar, max_scalar;
   vScalars->GetRange(range);
   min_scalar = range[0];
@@ -246,13 +247,13 @@ void TubeObjectRepresentation::CreateActors()
   //Step 7: remove any duplicate points from polydata. The tube filter
   //fails if any duplicates are present
   vtkCleanPolyData* vClean = vtkCleanPolyData::New();
-  vClean->SetInput(vPData);
+  vClean->SetInputData(vPData);
 
   //Step 8: make tubes. The number of sides per tube is set by nsides.
   //Even an nsides of 3 looks surprisingly good.
   vtkTubeFilter* vTFilter = vtkTubeFilter::New();
   vTFilter->SetNumberOfSides(5);
-  vTFilter->SetInput(vClean->GetOutput());
+  vTFilter->SetInputData(vClean->GetOutput());
   vTFilter->CappingOff();
 
   vTFilter->SetRadius(min_scalar);   //this call sets min rad.
@@ -261,7 +262,7 @@ void TubeObjectRepresentation::CreateActors()
 
   //Step 9: create a mapper of the tube
   vtkPolyDataMapper* vMapper = vtkPolyDataMapper::New();
-  vMapper->SetInput(vTFilter->GetOutput());
+  vMapper->SetInputData(vTFilter->GetOutput());
       
   vMapper->ScalarVisibilityOff();    //interpret scalars as color command
    

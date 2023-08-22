@@ -44,7 +44,7 @@ set( ITK_VERSION ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH} 
 if( ${ITK_VERSION} VERSION_LESS ${ITK_MIN_VERSION} )
   message( FATAL_ERROR "This application requires ITK version ${ITK_MIN_VERSION} or later. Provided version is ${ITK_VERSION}.")
 else()
-  INCLUDE (${USE_ITK_FILE})
+  INCLUDE (${ITK_USE_FILE})
 endif()
 
 #
@@ -58,7 +58,7 @@ set( VTK_VERSION ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}.${VTK_VERSION_PATCH} 
 if( ${VTK_VERSION} VERSION_LESS ${VTK_MIN_VERSION} )
   message( FATAL_ERROR "This application requires VTK version ${VTK_MIN_VERSION} or later. Provided version is ${VTK_VERSION}.")
 else()
-  INCLUDE (${USE_VTK_FILE})
+  INCLUDE (${VTK_USE_FILE})
 endif()
 
 #
@@ -84,31 +84,19 @@ ENDIF(IGSTK_USE_FLTK)
 #
 # FIND Qt
 #
-OPTION(IGSTK_USE_Qt "Use Qt for GUI" OFF)
+OPTION(IGSTK_USE_Qt "Use Qt for GUI" ON)
 IF(IGSTK_USE_Qt)
- # Check if VTK was built with GUISupport on
- IF( NOT VTK_USE_GUISUPPORT )
-  MESSAGE(FATAL_ERROR "To build IGSTK with Qt support, you will need to use a VTK
-build with GUI support i.e VTK_USE_GUISUPPORT turned on in VTK configuration")
- ENDIF( NOT VTK_USE_GUISUPPORT )
-
- # Check if VTK was built with Qt on
- IF( NOT VTK_USE_QVTK )
-  MESSAGE(FATAL_ERROR "To build IGSTK with Qt support, you will need to use a VTK
-build with Qt support i.e VTK_USE_QVTK turned on in VTK configuration")
- ENDIF( NOT VTK_USE_QVTK )
-
  # use what QVTK built with
- SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
+ SET(QT_QMAKE_EXECUTABLE ${QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
- SET(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE STRING "")
+ SET(DESIRED_QT_VERSION ${VTK_QT_VERSION} CACHE STRING "")
 
  IF( DESIRED_QT_VERSION MATCHES 3 )
     MESSAGE( FATAL_ERROR " VTK built using Qt 3. Please use Qt4" )
- ENDIF( DESIRED_QT_VERSION MATCHES 3)
+ ENDIF( DESIRED_QT_VERSION MATCHES 5)
 
- find_package(Qt4 REQUIRED)
+ find_package(Qt5 REQUIRED QUIET COMPONENTS Widgets)
 
  IF(QT_USE_FILE)
    INCLUDE(${QT_USE_FILE})
@@ -124,9 +112,9 @@ ENDIF(IGSTK_USE_Qt)
 SUBDIRS(Source)
 
 # Add the testing directories
-IF(BUILD_TESTING)
-   SUBDIRS(Testing)
-ENDIF(BUILD_TESTING)
+# IF(BUILD_TESTING)
+#    SUBDIRS(Testing)
+# ENDIF(BUILD_TESTING)
 
 # Add the examples directories
 OPTION(BUILD_EXAMPLES "Examples of the project" ON)
@@ -403,13 +391,14 @@ INSTALL(FILES
    DESTINATION ${IGSTK_INSTALL_INCLUDE_DIR}
 )
 
+message (STATUS 'before install')
 INSTALL(FILES
    ${IGSTK_BINARY_DIR}/IGSTKBuildSettings.cmake
    ${IGSTK_BINARY_DIR}/IGSTKLibraryDepends.cmake
    ${IGSTK_BINARY_DIR}/UseIGSTK.cmake
    DESTINATION ${IGSTK_INSTALL_PACKAGE_DIR}
 )
-
+message (STATUS 'after install')
 #-----------------------------------------------------------------------------
 # Set up CPack support, to be able to distribute IGSTK
 #
@@ -454,11 +443,11 @@ SUBDIRS(Utilities)
 OPTION(BUILD_DOCUMENTATION "Build IGSTK Documentation" OFF)
 IF(BUILD_DOCUMENTATION)
   find_package(VTK)
-  IF (USE_VTK_FILE)
-    INCLUDE (${USE_VTK_FILE})
-  ELSE (USE_VTK_FILE)
+  IF (VTK_USE_FILE)
+    INCLUDE (${VTK_USE_FILE})
+  ELSE (VTK_USE_FILE)
     MESSAGE( FATAL_ERROR "This application requires VTK. One of these components is missing. Please verify configuration")
-  ENDIF (USE_VTK_FILE)
+  ENDIF (VTK_USE_FILE)
   SUBDIRS(Utilities/Doxygen)
 ENDIF(BUILD_DOCUMENTATION)
 
