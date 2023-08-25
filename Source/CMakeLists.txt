@@ -50,6 +50,7 @@ SET(IGSTK_HEADS
   igstkRealTimeClock.h
   igstkSerialCommunication.h
   igstkSerialCommunicationSimulator.h
+  igstkSocketCommunication.h
   igstkSpatialObject.h
   igstkStateMachine.h
   igstkStateMachineInput.h
@@ -277,6 +278,7 @@ SET(IGSTK_SRCS
   igstkRealTimeClock.cxx
   igstkSerialCommunication.cxx
   igstkSerialCommunicationSimulator.cxx
+  igstkSocketCommunication.cxx
   igstkSpatialObject.cxx
   igstkStateMachine.txx
   igstkTimeStamp.cxx
@@ -464,9 +466,11 @@ ENDIF(IGSTK_USE_VideoImager)
 IF( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 
     igstkSerialCommunicationForWindows.h
+	igstkSocketCommunicationForWindows.h
   )
   SET(IGSTK_SRCS ${IGSTK_SRCS} 
     igstkSerialCommunicationForWindows.cxx
+	igstkSocketCommunicationForWindows.cxx
   )
 ELSE( WIN32 )
   SET(IGSTK_HEADS ${IGSTK_HEADS} 

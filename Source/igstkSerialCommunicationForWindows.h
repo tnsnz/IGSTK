@@ -18,9 +18,9 @@
 #ifndef __igstkSerialCommunicationForWindows_h
 #define __igstkSerialCommunicationForWindows_h
 
-#include <windows.h>
 
 #include "igstkSerialCommunication.h"
+
 
 namespace igstk
 {
@@ -108,6 +108,7 @@ private:
   unsigned int    m_OldTimeoutPeriod;
 
   HandleType      m_PortHandle;     // com port handle
+
 };
 
 } // end namespace igstk

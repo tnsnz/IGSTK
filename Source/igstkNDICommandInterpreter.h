@@ -20,7 +20,10 @@
 
 #include "igstkObject.h"
 #include "igstkSerialCommunication.h"
+#include "igstkSocketCommunication.h"
 #include "igstkNDIErrorEvent.h"
+
+//#define CONFIG_USE_LEGACY_CMD
 
 namespace igstk
 {
@@ -204,7 +207,8 @@ public:
     NDI_XFORMS_AND_STATUS     = 0x0001,  /**< transforms and status */
     NDI_ADDITIONAL_INFO       = 0x0002,  /**< additional tool transform info */
     NDI_SINGLE_STRAY          = 0x0004,  /**< stray active marker reporting */
-    NDI_INCLUDE_OUT_OF_VOLUME = 0x0800,  /**< include out-of-volume tools */ 
+    NDI_POSITION_MARKER		  = 0x0008,
+	NDI_INCLUDE_OUT_OF_VOLUME = 0x0800,  /**< include out-of-volume tools */ 
     NDI_PASSIVE_STRAY         = 0x1000,  /**< stray passive marker reporting */
     } TXModeType;
 
@@ -404,14 +408,15 @@ public:
     NDI_SUPPORTS_SENSING = 0x0008, /**< tool-in-port sensing is available */
     } SFLISTSummaryType;
 
-  /** Some required typedefs. */
-  typedef SerialCommunication            CommunicationType;
-
   /** Set the communication object that commands will be sent to */
-  void SetCommunication(CommunicationType* communication);
+  void SetCommunication(SerialCommunication* communication);
+  void SetCommunication(SocketCommunication* communication);
 
   /** Get the communication object */
-  CommunicationType* GetCommunication();
+  SerialCommunication* GetSerialCommunication();
+  SocketCommunication* GetSocketCommunication();
+
+  void RegisterReplyCommand(void(*cbFunc)(char*, int, char*, int));
 
   /** Send a text command to the device and receive a text reply.
    *  \param command the command to send, without the trailing CRC
@@ -461,22 +466,42 @@ public:
    * \param dps         should usually be NDI_8N1, the most common mode
    * \param handshake   one of NDI_HANDSHAKE or NDI_NOHANDSHAKE */
   void COMM(COMMBaudType baud, COMMDataType dps, COMMHandshakeType handshake) {
-    this->Command("COMM:%d%03d%d", baud, dps, handshake); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("COMM:%d%03d%d", baud, dps, handshake);
+#else
+    this->Command("COMM %d%03d%d", baud, dps, handshake);
+#endif
+  }
 
   /** Put the device into diagnostic mode.  This must be done prior
    * to executing the IRCHK() command.  Diagnostic mode is only useful 
    * on the POLARIS. */
   void DSTART() {
-    this->Command("DSTART:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("DSTART:");
+#else
+    this->Command("DSTART ");
+#endif
+  }
 
   /** Take the device out of diagnostic mode. */
   void DSTOP() {
-    this->Command("DSTOP:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("DSTOP:");
+#else
+    this->Command("DSTOP ");
+#endif
+  }
 
   /** Initialize the device.  The device must be
-   *  initialized before any other commands are sent. */
+    *  initialized before any other commands are sent. */
   void INIT() {
-    this->Command("INIT:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("INIT:");
+#else
+    this->Command("INIT ");
+#endif
+  }
 
   /** Check for sources of environmental infrared.
    *  This command is only valid in diagnostic mode after an IRINIT command.
@@ -488,12 +513,22 @@ public:
    * <p>The IRCHK command is used to update the information returned by the
    * GetIRCHKDetected() and GetIRCHKSourceXY() functions. */
   void IRCHK(int mode) {
-    this->Command("IRCHK:%04X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("IRCHK:%04X", mode);
+#else
+    this->Command("IRCHK %04X", mode);
+#endif
+  }
 
   /** Initialize the diagnostic environmental infrared checking system.
    *  This command must be called prior to using the IRCHK command. */
   void IRINIT() {
-    this->Command("IRINIT:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("IRINIT:");
+#else
+    this->Command("IRINIT ");
+#endif
+  }
 
   /** Set a tool LED to a particular state.
    *
@@ -503,24 +538,45 @@ public:
    *                or NDI_SOLID 'S'
    *  This command can be used in tracking mode. */
   void LED(int ph, int led, LEDStateType state) {
-    this->Command("LED:%02X%d%c", ph, led, state); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("LED:%02X%d%c", ph, led, state);
+#else
+    this->Command("LED %02X%d%c", ph, led, state);
+#endif
+  }
 
   /** Disable transform reporting on the specified port handle.
    *  \param ph valid port handle in the range 0x01 to 0xFF */
   void PDIS(int ph) {
-    this->Command("PDIS:%02X", ph); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PDIS:%02X", ph);
+#else
+    this->Command("PDIS %02X", ph);
+#endif
+  }
 
   /** Enable transform reporting on the specified port handle.
    * \param ph valid port handle in the range 0x01 to 0xFF
    * \param mode one of NDI_STATIC 'S', NDI_DYNAMIC 'D' or NDI_BUTTON_BOX 'B'
    */
   void PENA(int ph, int mode) {
-    this->Command("PENA:%02X%c", ph, mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PENA:%02X%c", ph, mode);
+#else
+    this->Command("PENA %02X%c", ph, mode);
+#endif
+  }
+
 
   /** Free the specified port handle.
    * \param ph valid port handle in the range 0x01 to 0xFF */
   void PHF(int ph) {
-    this->Command("PHF:%02X", ph); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PHF:%02X", ph);
+#else
+    this->Command("PHF %02X", ph);
+#endif
+  }
 
   /** Ask the device for information about a tool handle.
    *
@@ -545,7 +601,12 @@ public:
    *
    * <p>This command is not available during tracking mode. */
   void PHINF(int ph, int mode) {
-    this->Command("PHINF:%02X%04X", ph, mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PHINF:%02X%04X", ph, mode);
+#else
+    this->Command("PHINF %02X%04X", ph, mode);
+#endif
+  }
 
   /** Request a port handle given specific tool criteria.
    *
@@ -561,8 +622,13 @@ public:
   void PHRQ(const char* num, const char* sys, const char* tool,
             const char* port, const char* chan) 
     {
+#ifdef CONFIG_USE_LEGACY_CMD
     this->Command("PHRQ:%-8.8s%1.1s%1.1s%2.2s%2.2s", num, sys, tool, 
-                                                        port, chan); 
+                                                        port, chan);
+#else
+    this->Command("PHRQ %-8.8s%1.1s%1.1s%2.2s%2.2s", num, sys, tool, 
+                                                        port, chan);
+#endif
     }
 
   /** List the port handles.
@@ -581,13 +647,23 @@ public:
    * - int \ref GetPHSRInformation(int i)
    * <p>This command is not available during tracking mode. */
   void PHSR(PHSRModeType mode) {
-    this->Command("PHSR:%02X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PHSR:%02X", mode);
+#else
+    this->Command("PHSR %02X", mode);
+#endif
+  }
 
   /** Initialize the tool on the specified port handle.
    *
    * \param ph valid port handle in the range 0x01 to 0xFF */
   void PINIT(int ph) {
-    this->Command("PINIT:%02X", ph); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PINIT:%02X", ph);
+#else
+    this->Command("PINIT %02X", ph);
+#endif
+  }
 
   /** Set the three GPIO wire states for an AURORA tool.
    *  The states available are NDI_GPIO_NO_CHANGE, NDI_GPIO_SOLID,
@@ -598,14 +674,24 @@ public:
    * \param b   GPIO 2 state
    * \param c   GPIO 3 state */
   void PSOUT(int ph, int a, int b, int c) {
-    this->Command("PSOUT:%02X%c%c%c", ph, a, b, c); };
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PSOUT:%02X%c%c%c", ph, a, b, c);
+#else
+    this->Command("PSOUT %02X%c%c%c", ph, a, b, c);
+#endif
+  };
 
   /** Clear the virtual SROM for the specified port.  For a passive tool,
    *  this is equivalent to unplugging the tool.  This command has been
    *  deprecated in favor of the PHF() command.
    *  \param port one of '1', '2', '3' or 'A' to 'I' */
   void PVCLR(int port) {
-    this->Command("PVCLR:%c", port); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PVCLR:%c", port);
+#else
+    this->Command("PVCLR %c", port);
+#endif
+  }
 
   /** Write to a virtual SROM address on the specified port handle.
    *
@@ -614,12 +700,23 @@ public:
    * \param x 64-byte data array encoded as a 128-character hexadecimal string
    */
   void PVWR(int ph, int a, const char* x) {
-    this->Command("PVWR:%02X%04X%.128s", ph, a, x); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("PVWR:%02X%04X%.128s", ph, a, x);
+#else
+    this->Command("PVWR %02X%04X%.128s", ph, a, x);
+#endif
+  }
 
   /** Send a serial break to reset the device.  If the reset was not
    *  successful, the error code will be set to NDI_RESET_FAIL. */
   void RESET() {
-    this->Command(0); }
+    // Modified to be compatible with both serial/ethernet commands.
+#if 1
+	  this->Command("RESET %d", 0);
+#else
+    this->Command(0);
+#endif  
+  }
 
   /** Get a feature list for this device.
    *
@@ -638,7 +735,12 @@ public:
    * updates
    * the information returned by the following commands: */
   void SFLIST(SFLISTModeType mode) {
-    this->Command("SFLIST:%02X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("SFLIST:%02X", mode);
+#else
+    this->Command("SFLIST %02X", mode);
+#endif
+  }
 
   /**
    * Request status information from the device.
@@ -655,15 +757,30 @@ public:
    * - int \ref GetSSTATTIU()
    * <p>This command is not available during tracking mode. */
   void SSTAT(int mode) {
-    this->Command("SSTAT:%04X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("SSTAT:%04X", mode);
+#else
+    this->Command("SSTAT %04X", mode);
+#endif
+  }
 
   /** Put the device into tracking mode. */
   void TSTART() {
-    this->Command("TSTART:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("TSTART:");
+#else
+    this->Command("TSTART ");
+#endif
+  }
 
   /** Take the device out of tracking mode. */
   void TSTOP() {
-    this->Command("TSTOP:"); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("TSTOP:");
+#else
+    this->Command("TSTOP ");
+#endif
+  }
 
   /** Request tracking information from the device.  This command is
    * only available in tracking mode.
@@ -687,7 +804,12 @@ public:
    * - int \ref GetTXPassiveStray(int i, double coord[3])
    * - int \ref GetTXSystemStatus() */
   void TX(int mode) {
-    this->Command("TX:%04X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("TX:%04X", mode);
+#else
+    this->Command("TX %04X", mode);
+#endif
+  }
 
   /** Request tracking information from the device.  This command is
    *  only available in tracking mode.
@@ -713,7 +835,12 @@ public:
    *  - int \ref GetBXPassiveStray(int i, double coord[3])
    *  - int \ref GetBXSystemStatus() */
   void BX(int mode) {
-    this->Command("BX:%04X", mode); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("BX:%04X", mode);
+#else
+    this->Command("BX %04X", mode);
+#endif
+  }
 
   /** Get a string that describes the device firmware version.
    *
@@ -725,7 +852,12 @@ public:
    *  - NDI_CONTROL_FIRMWARE_ENHANCED 4 - control firmware with 
    *                                      enhanced versioning */
   void VER(VERModeType n) {
-    this->Command("VER:%d", n); }
+#ifdef CONFIG_USE_LEGACY_CMD
+    this->Command("VER:%d", n);
+#else
+    this->Command("VER %d", n);
+#endif
+  }
 
   /** Get error code from the last command.  An error code of NDI_OKAY signals
    *  that no error occurred.  The error codes are listed in 
@@ -1336,7 +1468,9 @@ private:
   itkStaticConstMacro( NDI_MAX_HANDLES, int, 24 );
 
   /** the communication object */
-  CommunicationType::Pointer m_Communication;
+  SerialCommunication::Pointer m_SerialComm;
+
+  SocketCommunication::Pointer m_SocketComm;
 
   /** command reply -- this is the return value from Command() */
   char *m_CommandReply;                    /* reply without CRC and <CR> */
@@ -1539,6 +1673,8 @@ private:
 
   NDICommandInterpreter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
+
+  void(*m_pGetReplyCommandFunc)(char*, int, char*, int);
 };
 
 }

@@ -307,6 +307,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     int ext[6];
 
     //m_ImageData->Update();
+    this->UpdateRepresentationProcessing();
     m_ImageData->GetExtent( ext );
 
     switch( m_Orientation )
@@ -426,8 +427,8 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
     this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
     if( this->m_ImageData )
       {
-      //update function asynchronized call
       //this->m_ImageData->Update();
+      this->UpdateRepresentationProcessing();
       }
     this->m_MapColors->SetInputData( this->m_ImageData );
     }
@@ -565,6 +566,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   int ext[6];
 
   //m_ImageData->Update();
+  this->UpdateRepresentationProcessing();
   m_ImageData->GetExtent( ext );
 
   EventHelperType::IntegerBoundsType bounds;

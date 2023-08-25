@@ -91,7 +91,7 @@ public:
     //QTWidget(QWidget* parent = NULL, Qt::WFlags f = 0);
 
   //! constructor for Qt 5
-  QTWidget(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+  QTWidget(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 #endif
 
   /** Destructor */

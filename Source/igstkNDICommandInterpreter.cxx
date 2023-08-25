@@ -42,7 +42,8 @@ const unsigned int NDI_TRACKING_TIMEOUT = 100;
 /** Constructor: initialize internal variables. */
 NDICommandInterpreter::NDICommandInterpreter():m_StateMachine(this)
 {
-  m_Communication = 0;
+  m_SerialComm = 0;
+  m_SocketComm = 0;
 
   m_SerialCommand = new char[NDI_MAX_COMMAND_SIZE+1];
   m_SerialReply = new char[NDI_MAX_REPLY_SIZE+1];
@@ -53,6 +54,8 @@ NDICommandInterpreter::NDICommandInterpreter():m_StateMachine(this)
 
   m_Tracking = 0;
   m_ErrorCode = 0;
+
+  m_pGetReplyCommandFunc = NULL;
 }
 
 /** Destructor: free any memory that has been allocated. */
@@ -64,9 +67,9 @@ NDICommandInterpreter::~NDICommandInterpreter()
 }
 
 /** Set the communication object to use. */
-void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
+void NDICommandInterpreter::SetCommunication(SerialCommunication* communication)
 {
-  m_Communication = communication;
+  m_SerialComm = communication;
  
   /** These are the communication parameters that the NDI devices are
    * set up for when they are turned on or reset. */
@@ -106,11 +109,52 @@ void NDICommandInterpreter::SetCommunication(CommunicationType* communication)
   communication->SetReadTerminationCharacter('\r');
 }
 
-/** Get the communication object. */
-NDICommandInterpreter::CommunicationType *
-NDICommandInterpreter::GetCommunication()
+void NDICommandInterpreter::SetCommunication(SocketCommunication* communication)
 {
-  return m_Communication;
+	m_SocketComm = communication;
+
+	/** These are the communication parameters that the NDI devices are
+	* set up for when they are turned on or reset. */
+	communication->UpdateParameters();
+
+	/**  The timeouts are tricky to deal with.  The NDI devices reply
+	*  almost immediately after most command, with notable exceptions:
+	*  INIT, RESET, PINIT and some diagnostic commands tie up the
+	*  device for quite some time.  The worst offender is PINIT,
+	*  since port initialization can take up to 5 seconds.
+	*
+	*  A long timeout is a problem if a line error (i.e. error caused
+	*  by noise in the serial cable) occurs.  Line errors occur
+	*  infrequently at 57600 baud and frequenty at 115200 baud.
+	*  A line error can cause a loss of the trailing carriage return
+	*  on a data record, and the Read() command will of course keep
+	*  waiting for this nonexistent carriage return. Five seconds is
+	*  a long time to wait!  As a solution, while in tracking mode, the
+	*  timeout period is reduced to just 0.1 seconds so that errors
+	*  can be detected and dealt with swiftly.
+	*
+	*  Line errors in tracking mode are no danger, since CRC checking will
+	*  automatically detect and discard bad data records.  However, we
+	*  don't want the system to freeze for 5 seconds each time an error
+	*  like this occurs, which is why we reduce the timeout to 0.1s in
+	*  tracking mode.
+	*/
+	communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+
+	/** All replies from the NDI devices end in a carriage return. */
+	communication->SetUseReadTerminationCharacter(1);
+	communication->SetReadTerminationCharacter('\r');
+}
+
+/** Get the communication object. */
+SerialCommunication* NDICommandInterpreter::GetSerialCommunication()
+{
+	return m_SerialComm;
+}
+
+SocketCommunication* NDICommandInterpreter::GetSocketCommunication()
+{
+	return m_SocketComm;
 }
 
 /** Convert an ASCII hex string of length "n" to an unsigned integer. */
@@ -482,36 +526,41 @@ inline void ndiCalcCRC16(int nextchar, unsigned int *puCRC16)
 /** Write a serial break to the device */
 int NDICommandInterpreter::WriteSerialBreak()
 {
-  /* serial break will force tracking to stop */
-  m_Communication->SetBaudRate(SerialCommunication::BaudRate9600);
-  m_Communication->SetDataBits(SerialCommunication::DataBits8);
-  m_Communication->SetParity(SerialCommunication::NoParity);
-  m_Communication->SetStopBits(SerialCommunication::StopBits1);
-  m_Communication->SetHardwareHandshake(SerialCommunication::HandshakeOff);
-  
-  int result = NDI_BAD_COMM;
+	if (m_SerialComm.IsNotNull())
+	{
+		/* serial break will force tracking to stop */
+		m_SerialComm->SetBaudRate(SerialCommunication::BaudRate9600);
+		m_SerialComm->SetDataBits(SerialCommunication::DataBits8);
+		m_SerialComm->SetParity(SerialCommunication::NoParity);
+		m_SerialComm->SetStopBits(SerialCommunication::StopBits1);
+		m_SerialComm->SetHardwareHandshake(SerialCommunication::HandshakeOff);
 
-  if (m_Communication->UpdateParameters() == Communication::SUCCESS)
-    {
-    m_Communication->Sleep(500);
+		int result = NDI_BAD_COMM;
 
-    result = NDI_WRITE_ERROR;
-    /* send break, reset the comm parameters */
-    if (m_Communication->SendBreak() == Communication::SUCCESS)
-      {
-      /* sleep time plus timeout time must be > 10 seconds, or
-       * a timeout error might occur while waiting for reset */
-      int sleepTime = 11000 - NDI_NORMAL_TIMEOUT;
-      if (sleepTime > 0)
-        {
-        m_Communication->Sleep(sleepTime);
-        }
-      
-      result = 0;
-      }
-    }
+		if (m_SerialComm->UpdateParameters() == Communication::SUCCESS)
+		{
+			m_SerialComm->Sleep(500);
 
-  return this->SetErrorCode(result);
+			result = NDI_WRITE_ERROR;
+			/* send break, reset the comm parameters */
+			if (m_SerialComm->SendBreak() == Communication::SUCCESS)
+			{
+				/* sleep time plus timeout time must be > 10 seconds, or
+				 * a timeout error might occur while waiting for reset */
+				int sleepTime = 11000 - NDI_NORMAL_TIMEOUT;
+				if (sleepTime > 0)
+				{
+					m_SerialComm->Sleep(sleepTime);
+				}
+
+				result = 0;
+			}
+		}
+
+		return this->SetErrorCode(result);
+	}
+	
+	return this->SetErrorCode(0);
 }
 
 /** Add a CRC value to a command and write it, and return the size of
@@ -561,7 +610,12 @@ int NDICommandInterpreter::WriteCommand(unsigned int *nc)
   n = i;
 
   /* send the command to the device */
-  int writeError = m_Communication->Write(cp, n);
+  int writeError = Communication::FAILURE;
+  if (m_SerialComm.IsNotNull())
+	  writeError = m_SerialComm->Write(cp, n);
+  else if (m_SocketComm.IsNotNull())
+	  writeError = m_SocketComm->Write(cp, n);
+
   int errcode = NDI_TIMEOUT;
   if (writeError != Communication::TIMEOUT)
     {
@@ -590,12 +644,18 @@ int NDICommandInterpreter::ReadBinaryReply(unsigned int offset)
   crp = m_CommandReply;      /* received text, with CRC hacked off */
 
   /* read fixed-length records, rather than checking for CR */
-  m_Communication->SetUseReadTerminationCharacter(0);
+  if (m_SerialComm.IsNotNull())
+	  m_SerialComm->SetUseReadTerminationCharacter(0);
+  else if (m_SocketComm.IsNotNull())
+	  m_SocketComm->SetUseReadTerminationCharacter(0);
 
   /* read the header first */
   if (offset < 6)
     {
-    readError = m_Communication->Read(&rp[offset], 6-offset, m);
+	  if (m_SerialComm.IsNotNull())
+		  readError = m_SerialComm->Read(&rp[offset], 6 - offset, m);
+	  else if (m_SocketComm.IsNotNull())
+		  readError = m_SocketComm->Read(&rp[offset], 6 - offset, m);
     offset += m;
     if (readError != Communication::SUCCESS)
       {
@@ -634,9 +694,14 @@ int NDICommandInterpreter::ReadBinaryReply(unsigned int offset)
   /* the full reply length is recordLength + 6 (for header) + 2 * (for CRC) */
   if (offset < recordLength + 8)
     { 
-    readError = m_Communication->Read(&rp[offset],
-                                      recordLength + 8 - offset,
-                                      m);
+	  if (m_SerialComm.IsNotNull())
+		  readError = m_SerialComm->Read(&rp[offset],
+		  recordLength + 8 - offset,
+		  m);
+	  else if (m_SocketComm.IsNotNull())
+		  readError = m_SocketComm->Read(&rp[offset],
+		  recordLength + 8 - offset,
+		  m);
 
     if (readError != Communication::SUCCESS)
       {
@@ -677,10 +742,19 @@ int NDICommandInterpreter::ReadAsciiReply(unsigned int offset)
   rp = m_SerialReply;        /* reply from the device */
   crp = m_CommandReply;      /* received text, with CRC hacked off */
 
-  m_Communication->SetUseReadTerminationCharacter(1);
-  readError = m_Communication->Read(&rp[offset],
-                                    NDI_MAX_REPLY_SIZE - offset,
-                                    m);
+  if (m_SerialComm.IsNotNull())
+	  m_SerialComm->SetUseReadTerminationCharacter(1);
+  else if (m_SocketComm.IsNotNull())
+	  m_SocketComm->SetUseReadTerminationCharacter(1);
+  
+  if (m_SerialComm.IsNotNull())
+	  readError = m_SerialComm->Read(&rp[offset],
+	  NDI_MAX_REPLY_SIZE - offset,
+	  m);
+  else if (m_SocketComm.IsNotNull())
+	  readError = m_SocketComm->Read(&rp[offset],
+	  NDI_MAX_REPLY_SIZE - offset,
+	  m);
   m += offset;
 
   if (readError != Communication::SUCCESS)
@@ -749,14 +823,18 @@ const char* NDICommandInterpreter::Command(const char* command)
 
   /* purge the buffer, because anything that we haven't read or
      written yet is garbage left over by a previously failed command */
-  m_Communication->PurgeBuffers();
+  if (m_SerialComm.IsNotNull())
+  {
+	  m_SerialComm->PurgeBuffers();
+  }
 
   /* if the command is NULL, send a break to reset the device */
   if (command == 0)
     {
     /* serial break will force tracking to stop */
     m_Tracking = 0;
-    m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+	if (m_SerialComm.IsNotNull())
+		m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
 
     /* set m_SerialCommand to null string */ 
     cp[0] = '\0';
@@ -781,7 +859,8 @@ const char* NDICommandInterpreter::Command(const char* command)
         ( cp[1] == 'I' && (strncmp(cp, "INIT",  4) == 0) )    )
       {
       m_Tracking = 0;
-      m_Communication->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+	  if (m_SerialComm.IsNotNull())
+		m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
       }
 
     /* add a CRC, write the data, and get command prefix size in "nc" */
@@ -801,7 +880,7 @@ const char* NDICommandInterpreter::Command(const char* command)
       this->ReadAsciiReply(0);
       }
     }
-
+  
   /* if the command was NULL, check reset reply */
   if (m_ErrorCode == 0)
     {
@@ -822,7 +901,8 @@ const char* NDICommandInterpreter::Command(const char* command)
       {
       /* if TSTART, then decrease the timeout, since otherwise the
          system will freeze for 5 seconds each time there is a error */
-      m_Communication->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
+		if (m_SerialComm.IsNotNull())
+			m_SerialComm->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
       m_Tracking = 1;
       }
 
@@ -868,6 +948,8 @@ const char* NDICommandInterpreter::Command(const char* command)
     }
 
   /* return the device's reply, but with the CRC hacked off */
+  if (m_pGetReplyCommandFunc)
+	  m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp, strlen(crp));
   return crp;
 }
 
@@ -2361,15 +2443,15 @@ void NDICommandInterpreter::HelperForCOMM(const char* cp,
       }
 
     /* let the device sleep a bit */
-    m_Communication->Sleep(100);
+	m_SerialComm->Sleep(100);
 
-    m_Communication->SetBaudRate(newspeed);
-    m_Communication->SetDataBits(newdata);
-    m_Communication->SetParity(newparity);
-    m_Communication->SetStopBits(newstop);
-    m_Communication->SetHardwareHandshake(newhand);
+	m_SerialComm->SetBaudRate(newspeed);
+	m_SerialComm->SetDataBits(newdata);
+	m_SerialComm->SetParity(newparity);
+	m_SerialComm->SetStopBits(newstop);
+	m_SerialComm->SetHardwareHandshake(newhand);
 
-    if (m_Communication->UpdateParameters() == Communication::SUCCESS)
+	if (m_SerialComm->UpdateParameters() == Communication::SUCCESS)
       {
       errcode = 0;
       }
@@ -2406,5 +2488,12 @@ void NDICommandInterpreter::PrintSelf(std::ostream& os,
   os << indent << "ErrorCode: " << m_ErrorCode << std::endl;
 }
 
+void NDICommandInterpreter::RegisterReplyCommand(void(*cbFunc)(char*, int, char*, int))
+{
+	if (cbFunc)
+	{
+		m_pGetReplyCommandFunc = cbFunc;
+	}
+}
 
 }

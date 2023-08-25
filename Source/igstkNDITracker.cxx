@@ -33,10 +33,12 @@ namespace igstk
 NDITracker::NDITracker(void):m_StateMachine(this)
 {
   m_CommandInterpreter = CommandInterpreterType::New();
+  m_SerialComm = 0;
+  m_SocketComm = 0;
 
   this->SetThreadingEnabled( true );
 
-  m_BaudRate = CommunicationType::BaudRate115200; 
+  m_BaudRate = SerialCommunication::BaudRate115200; 
   //m_BufferLock = itk::MutexLock::New();
 }
 
@@ -82,11 +84,11 @@ NDITracker::GetCommandInterpreter() const
 
 /** Set the communication object, it will be initialized as necessary
   * for use with the NDI */
-void NDITracker::SetCommunication( CommunicationType *communication )
+void NDITracker::SetCommunication( SerialCommunication *communication )
 {
   igstkLogMacro( DEBUG, 
     "igstk::NDITracker:: Entered SetCommunication ...\n");
-  m_Communication = communication;
+  m_SerialComm = communication;
   m_BaudRate = communication->GetBaudRate();
   m_CommandInterpreter->SetCommunication( communication );
 
@@ -101,6 +103,24 @@ void NDITracker::SetCommunication( CommunicationType *communication )
     "igstk::NDITracker:: Exiting SetCommunication ...\n"); 
 }
 
+void NDITracker::SetCommunication( SocketCommunication *communication )
+{
+	igstkLogMacro(DEBUG,
+		"igstk::NDITracker:: Entered SetCommunication ...\n");
+	m_SocketComm = communication;
+	m_CommandInterpreter->SetCommunication(communication);
+
+	// data records are of variable length and end with a carriage return
+	if (communication)
+	{
+		communication->SetUseReadTerminationCharacter(true);
+		communication->SetReadTerminationCharacter('\r');
+	}
+
+	igstkLogMacro(DEBUG,
+		"igstk::NDITracker:: Exiting SetCommunication ...\n");
+}
+
 /** Open communication with the tracking device. */
 NDITracker::ResultType NDITracker::InternalOpen( void )
 {
@@ -108,7 +128,7 @@ NDITracker::ResultType NDITracker::InternalOpen( void )
 
   ResultType result = SUCCESS;
 
-  if (!m_Communication)
+  if (m_SerialComm.IsNull() && m_SocketComm.IsNull())
     {
     igstkLogMacro( CRITICAL, "NDITracker: AttemptToOpen before "
                    "Communication is set.\n");
@@ -118,7 +138,6 @@ NDITracker::ResultType NDITracker::InternalOpen( void )
   if (result == SUCCESS)
     {
     m_CommandInterpreter->RESET();
-    m_CommandInterpreter->INIT();
 
     result = this->CheckError(m_CommandInterpreter);
     }
@@ -132,36 +151,40 @@ NDITracker::ResultType NDITracker::InternalOpen( void )
 
   if (result == SUCCESS)
     {
-    // increase the baud rate to the initial baud rate that was set for
-    // serial communication, since the baud rate is set to 9600 by 
-    // NDICommandInterpreter::SetCommunication() in order to communicate
-    // with the just-turned-on device which has a default baud rate of 9600
-    CommandInterpreterType::COMMBaudType baudRateForCOMM = 
-      CommandInterpreterType::NDI_115200;
+	  if (m_SerialComm)
+	  {
+		  // increase the baud rate to the initial baud rate that was set for
+		  // serial communication, since the baud rate is set to 9600 by 
+		  // NDICommandInterpreter::SetCommunication() in order to communicate
+		  // with the just-turned-on device which has a default baud rate of 9600
+		  CommandInterpreterType::COMMBaudType baudRateForCOMM =
+			  CommandInterpreterType::NDI_115200;
 
-    switch (m_BaudRate)
-      {
-      case CommunicationType::BaudRate9600:
-        baudRateForCOMM = CommandInterpreterType::NDI_9600;
-        break;
-      case CommunicationType::BaudRate19200:
-        baudRateForCOMM = CommandInterpreterType::NDI_19200;
-        break;
-      case CommunicationType::BaudRate38400:
-        baudRateForCOMM = CommandInterpreterType::NDI_38400;
-        break;
-      case CommunicationType::BaudRate57600:
-        baudRateForCOMM = CommandInterpreterType::NDI_57600;
-        break;
-      case CommunicationType::BaudRate115200:
-        baudRateForCOMM = CommandInterpreterType::NDI_115200;
-        break;
-      }
+		  switch (m_BaudRate)
+		  {
+		  case SerialCommunication::BaudRate9600:
+			  baudRateForCOMM = CommandInterpreterType::NDI_9600;
+			  break;
+		  case SerialCommunication::BaudRate19200:
+			  baudRateForCOMM = CommandInterpreterType::NDI_19200;
+			  break;
+		  case SerialCommunication::BaudRate38400:
+			  baudRateForCOMM = CommandInterpreterType::NDI_38400;
+			  break;
+		  case SerialCommunication::BaudRate57600:
+			  baudRateForCOMM = CommandInterpreterType::NDI_57600;
+			  break;
+		  case SerialCommunication::BaudRate115200:
+			  baudRateForCOMM = CommandInterpreterType::NDI_115200;
+			  break;
+		  }
 
-    m_CommandInterpreter->COMM(baudRateForCOMM,
-                               CommandInterpreterType::NDI_8N1,
-                               CommandInterpreterType::NDI_NOHANDSHAKE);
-
+		  m_CommandInterpreter->COMM(baudRateForCOMM,
+			  CommandInterpreterType::NDI_8N1,
+			  CommandInterpreterType::NDI_NOHANDSHAKE);
+	  }
+	  Sleep(1000);
+    m_CommandInterpreter->INIT();
     result = this->CheckError(m_CommandInterpreter);
     }
 
@@ -173,11 +196,13 @@ NDITracker::ResultType NDITracker::InternalClose( void )
 {
   igstkLogMacro( DEBUG, "igstk::NDITracker::InternalClose called ...\n");
 
-  // return the device back to its initial comm setttings
-  m_CommandInterpreter->COMM(CommandInterpreterType::NDI_9600,
-                             CommandInterpreterType::NDI_8N1,
-                             CommandInterpreterType::NDI_NOHANDSHAKE);
-
+  if (m_SerialComm)
+  {
+	  // return the device back to its initial comm setttings
+	  m_CommandInterpreter->COMM(CommandInterpreterType::NDI_9600,
+		  CommandInterpreterType::NDI_8N1,
+		  CommandInterpreterType::NDI_NOHANDSHAKE);
+  }
   return this->CheckError(m_CommandInterpreter);
 }
 
@@ -340,7 +365,13 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
                  "called ...\n");
 
   // get the transforms for all tools from the NDI
-  m_CommandInterpreter->TX(CommandInterpreterType::NDI_XFORMS_AND_STATUS);
+  m_CommandInterpreter->TX(
+	  CommandInterpreterType::NDI_XFORMS_AND_STATUS |
+	  CommandInterpreterType::NDI_ADDITIONAL_INFO |
+	  CommandInterpreterType::NDI_SINGLE_STRAY |
+	  CommandInterpreterType::NDI_POSITION_MARKER |
+	  CommandInterpreterType::NDI_INCLUDE_OUT_OF_VOLUME |
+	  CommandInterpreterType::NDI_PASSIVE_STRAY);
 
   ResultType result = this->CheckError(m_CommandInterpreter);
 

@@ -19,6 +19,7 @@
 #define __igstkNDITracker_h
 
 #include "igstkSerialCommunication.h"
+#include "igstkSocketCommunication.h"
 #include "igstkNDICommandInterpreter.h"
 #include "igstkTrackerTool.h"
 #include "igstkTracker.h"
@@ -41,12 +42,15 @@ public:
 
 public:
 
-  /** communication type */
-  typedef igstk::SerialCommunication     CommunicationType;
-
   /** The SetCommunication method is used to attach a communication
     * object to the tracker object. */
-  void SetCommunication( CommunicationType *communication );
+  void SetCommunication( SerialCommunication *communication);
+
+  void SetCommunication( SocketCommunication *communication);
+
+  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+  CommandInterpreterType::Pointer GetCommandInterpreter() const;
+
 
 protected:
 
@@ -55,7 +59,7 @@ protected:
   virtual ~NDITracker(void);
 
   /** typedef for command interpreter */
-  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
+//  typedef igstk::NDICommandInterpreter   CommandInterpreterType;
 
   /** typedef for internal boolean return type */
   typedef Tracker::ResultType   ResultType;
@@ -103,7 +107,7 @@ protected:
 
   /** Get method for the command interpreter 
     * This will method will be used by the derived classes */
-  CommandInterpreterType::Pointer GetCommandInterpreter() const;
+  //CommandInterpreterType::Pointer GetCommandInterpreter() const;
 
   /** Helper function for reporting interpreter errors. */
   ResultType CheckError( CommandInterpreterType * ) const;
@@ -121,10 +125,11 @@ private:
   std::mutex m_BufferLock;
 
   /** The "Communication" instance */
-  CommunicationType::Pointer       m_Communication;
+  SerialCommunication::Pointer       m_SerialComm;
+  SocketCommunication::Pointer		 m_SocketComm;
 
   /** The baud rate to use */
-  CommunicationType::BaudRateType  m_BaudRate;
+  SerialCommunication::BaudRateType  m_BaudRate;
 
   /** The command interpreter */
   CommandInterpreterType::Pointer  m_CommandInterpreter;
