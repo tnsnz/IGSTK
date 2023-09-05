@@ -425,12 +425,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( this->m_VTKImageObserver->GotVTKImage() ) 
     {
     this->m_ImageData = this->m_VTKImageObserver->GetVTKImage();
-    if( this->m_ImageData )
-      {
-      //this->m_ImageData->Update();
-      this->UpdateRepresentationProcessing();
-      }
-    this->m_MapColors->SetInputData( this->m_ImageData );
+    UpdateRepresentationProcessing();
     }
 
   this->m_ImageTransformObserver->Reset();
@@ -480,6 +475,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   if( m_ImageData )
     {
     m_MapColors->SetInputData( m_ImageData );
+    m_MapColors->Update();
     }
 }
 
@@ -566,7 +562,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   int ext[6];
 
   //m_ImageData->Update();
-  this->UpdateRepresentationProcessing();
+  UpdateRepresentationProcessing();
   m_ImageData->GetExtent( ext );
 
   EventHelperType::IntegerBoundsType bounds;
@@ -617,7 +613,7 @@ void
 ImageSpatialObjectRepresentation< TImageSpatialObject >
 ::ConnectVTKPipelineProcessing() 
 {
-  m_MapColors->SetInputData( m_ImageData );
+  UpdateRepresentationProcessing();
   m_ImageActor->SetInputData( m_MapColors->GetOutput() );
   m_ImageActor->InterpolateOn();
 }

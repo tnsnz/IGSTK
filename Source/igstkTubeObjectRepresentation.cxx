@@ -75,12 +75,12 @@ void TubeObjectRepresentation
   m_TubeObjectToAdd = Tube;
   if( !m_TubeObjectToAdd )
     {
-    igstkPushInputMacro( NullTubeObject );
+    m_StateMachine.PushInput(m_NullTubeObjectInput);
     m_StateMachine.ProcessInputs();
     }
   else
     {
-    igstkPushInputMacro( ValidTubeObject );
+    m_StateMachine.PushInput(m_ValidTubeObjectInput);
     m_StateMachine.ProcessInputs();
     }
 }

@@ -20,7 +20,6 @@
 
 #include "igstkMacros.h"
 #include "igstkSpatialObject.h"
-//#include <itkCylinderSpatialObject.h>
 #include <itkTubeSpatialObject.h>
 
 namespace igstk
@@ -47,7 +46,10 @@ namespace igstk
 	public:
 
 		/** Typedefs */
-		typedef itk::TubeSpatialObject<3> CylinderSpatialObjectType;
+		typedef itk::TubeSpatialObject<3>                        CylinderSpatialObjectType;
+		typedef CylinderSpatialObjectType::Pointer               CylinderPointerType;
+		typedef CylinderSpatialObjectType::TubePointType         CylinderPointType;
+		typedef CylinderSpatialObjectType::TubePointListType     CylinderPointListType;
 
 		/** Set the radius of the Cylinder */
 		void SetRadius(double radius);
@@ -72,7 +74,7 @@ namespace igstk
 	private:
 
 		/** Internal itkSpatialObject */
-		itk::TubeSpatialObject<3>::Pointer   m_CylinderSpatialObject;
+		CylinderPointerType m_CylinderSpatialObject;
 
 	};
 

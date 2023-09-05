@@ -75,7 +75,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 
   igstkLogMacro( DEBUG, "InternalOpenPort on " << device << "\n" );
 
-  portHandle = CreateFile(device,
+  portHandle = CreateFile(reinterpret_cast<LPCWSTR>(device),
                           GENERIC_READ|GENERIC_WRITE,
                           0,  /* not allowed to share ports */
                           0,  /* child-processes don't inherit handle */

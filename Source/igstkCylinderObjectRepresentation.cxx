@@ -124,6 +124,7 @@ void CylinderObjectRepresentation::UpdateRepresentationProcessing()
 
   m_CylinderSource->SetRadius( m_CylinderSpatialObject->GetRadius() );
   m_CylinderSource->SetHeight( m_CylinderSpatialObject->GetHeight() );
+  m_CylinderSource->Update();
 }
 
 

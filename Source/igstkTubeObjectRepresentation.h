@@ -23,6 +23,7 @@
 #include "igstkTubeObject.h"
 #include "igstkStateMachine.h"
 
+class vtkPolyData;
 namespace igstk
 {
 
@@ -86,6 +87,9 @@ private:
 
   /** Null operation for a State Machine transition */
   void NoProcessing();
+  //CrossHairPositionObserver::Pointer  m_CrossHairPositionObserver;
+
+  vtkPolyData* polyData;
 
 private:
 

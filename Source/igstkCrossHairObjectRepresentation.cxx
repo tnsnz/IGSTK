@@ -267,12 +267,15 @@ CrossHairObjectRepresentation
 
   m_LineSourceY->SetPoint1( position[0], m_ImageBounds[2], position[2] );
   m_LineSourceY->SetPoint2( position[0], m_ImageBounds[3], position[2] );
+  m_LineSourceY->Update();
 
   m_LineSourceX->SetPoint1( m_ImageBounds[0], position[1], position[2] );
   m_LineSourceX->SetPoint2( m_ImageBounds[1], position[1], position[2] );
+  m_LineSourceX->Update();
 
   m_LineSourceZ->SetPoint1( position[0], position[1], m_ImageBounds[4] );
   m_LineSourceZ->SetPoint2( position[0], position[1], m_ImageBounds[5] );
+  m_LineSourceZ->Update();
 }
 
 /** Create the vtk Actors */
@@ -286,7 +289,7 @@ void CrossHairObjectRepresentation
   m_LineProperty->SetAmbient(1);
   m_LineProperty->SetRepresentationToWireframe();
   m_LineProperty->SetInterpolationToFlat();
-  m_LineProperty->SetLineWidth(m_LineWidth);
+  m_LineProperty->SetLineWidth(1);
   m_LineProperty->SetColor( this->GetRed(),this->GetGreen(),this->GetBlue() );
 
   // build x cross hair
@@ -294,18 +297,18 @@ void CrossHairObjectRepresentation
   //give any initial value
   m_LineSourceX = vtkLineSource::New();
   m_LineSourceX->SetPoint1( 0, 0, 0 );
-  m_LineSourceX->SetPoint2( 0, 1, 0 );
+  m_LineSourceX->SetPoint2( 3, 0, 0 );
+  m_LineSourceX->Update();
 
   vtkPolyDataMapper* lineMapperX = vtkPolyDataMapper::New();
   lineMapperX->SetInputData( m_LineSourceX->GetOutput() );
   lineMapperX->SetResolveCoincidentTopologyToPolygonOffset();
   lineMapperX->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
+  lineMapperX->Update();
 
   vtkActor* lineActorX = vtkActor::New();
   lineActorX->SetMapper (lineMapperX);
   lineActorX->SetProperty(m_LineProperty);
-
-  lineMapperX->Delete();
   this->AddActor( lineActorX );
 
   // build y cross hair
@@ -313,18 +316,18 @@ void CrossHairObjectRepresentation
   //give any initial value
   m_LineSourceY = vtkLineSource::New();
   m_LineSourceY->SetPoint1( 0, 0, 0 );
-  m_LineSourceY->SetPoint2( 0, 1, 0 );
+  m_LineSourceY->SetPoint2( 0, 3, 0 );
+  m_LineSourceY->Update();
 
   vtkPolyDataMapper* lineMapperY = vtkPolyDataMapper::New();
   lineMapperY->SetInputData( m_LineSourceY->GetOutput() );
   lineMapperY->SetResolveCoincidentTopologyToPolygonOffset();
   lineMapperY->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
+  lineMapperY->Update();
 
   vtkActor* lineActorY = vtkActor::New();
   lineActorY->SetMapper (lineMapperY);
   lineActorY->SetProperty(m_LineProperty);
-
-  lineMapperY->Delete();
   this->AddActor( lineActorY );
 
   // build z cross hair
@@ -332,18 +335,18 @@ void CrossHairObjectRepresentation
   //give any initial value
   m_LineSourceZ = vtkLineSource::New();
   m_LineSourceZ->SetPoint1( 0, 0, 0 );
-  m_LineSourceZ->SetPoint2( 0, 0, 1 );
+  m_LineSourceZ->SetPoint2( 0, 0, 3 );
+  m_LineSourceZ->Update();
 
   vtkPolyDataMapper* lineMapperZ = vtkPolyDataMapper::New();
   lineMapperZ->SetInputData( m_LineSourceZ->GetOutput() );
   lineMapperZ->SetResolveCoincidentTopologyToPolygonOffset();
   lineMapperZ->SetResolveCoincidentTopologyPolygonOffsetParameters(10,10);
+  lineMapperZ->Update();
 
   vtkActor* lineActorZ = vtkActor::New();
   lineActorZ->SetMapper (lineMapperZ);
   lineActorZ->SetProperty(m_LineProperty);
-
-  lineMapperZ->Delete();
   this->AddActor( lineActorZ );
 }
 

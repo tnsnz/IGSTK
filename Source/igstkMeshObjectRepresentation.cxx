@@ -188,6 +188,7 @@ void MeshObjectRepresentation::CreateActors()
     
   polyData->SetPoints(polyPoints);
   pointMapper->SetInputData(polyData);
+  pointMapper->Update();
   meshActor->SetMapper(pointMapper);
  
   this->AddActor( meshActor );

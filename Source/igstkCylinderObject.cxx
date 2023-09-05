@@ -24,6 +24,18 @@ namespace igstk
 	{
 		// We create the ellipse spatial object
 		m_CylinderSpatialObject = CylinderSpatialObjectType::New();
+
+		CylinderPointListType pointList;
+		CylinderPointType p1, p2;
+		p1.SetPositionInObjectSpace(0, 0, 0);
+		p1.SetRadiusInObjectSpace(0);
+		pointList.push_back(p1);
+		p2.SetPositionInObjectSpace(0, 0, 0);
+		p2.SetRadiusInObjectSpace(0);
+		pointList.push_back(p2);
+		m_CylinderSpatialObject->SetPoints(pointList);
+		m_CylinderSpatialObject->Update();
+
 		this->RequestSetInternalSpatialObject(m_CylinderSpatialObject);
 	}
 
@@ -35,65 +47,59 @@ namespace igstk
 
 	void CylinderObject::SetRadius(double radius)
 	{
-		//m_CylinderSpatialObject->SetRadius( radius );
-		//for (auto point : m_CylinderSpatialObject->GetPoints()) {
-		//	point.SetRadiusInObjectSpace(radius);
-		//}
+		//m_CylinderSpatialObject->SetRadius(radius);
+		assert(m_CylinderSpatialObject->GetPoints().size() == 2);
+
+		for (auto &point : m_CylinderSpatialObject->GetPoints()) {
+			point.SetRadiusInObjectSpace(radius);
+		}
+		m_CylinderSpatialObject->Update();
 	}
 
 
 	void CylinderObject::SetHeight(double height)
 	{
 		//m_CylinderSpatialObject->SetHeight(height);
-		//for (auto point : m_CylinderSpatialObject->GetPoints()) {
-		//	point.SetPositionInObjectSpace(height);
-		//}
+		auto &points = m_CylinderSpatialObject->GetPoints();
+		assert(points.size() == 2);
+		
+		auto position = points[1].GetPositionInObjectSpace();
+		assert(position.size() == 3);
+
+		position[2] = height;
+		points[1].SetPositionInObjectSpace(position);
+
+		m_CylinderSpatialObject->Update();
 	}
 
 	double CylinderObject::GetRadius() const
 	{
 		//return m_CylinderSpatialObject->GetRadius();
 
-		//double prevRadius = -1;
-		//double radius = 0;
+		assert(m_CylinderSpatialObject->GetPoints().size() == 2);
+		double prevRadius = -1;
+		double radius = 0;
 
-		//for (auto point : m_CylinderSpatialObject->GetPoints()) {
-		//	if (-1 != prevRadius
-		//		&& prevRadius != radius) {
-		//		std::exception e("Cylinder's radius is gnarled in CylinderObject::GetRadius");
-		//		throw e;
-		//	}
+		for (auto point : m_CylinderSpatialObject->GetPoints()) {
+			assert(-1 == prevRadius || prevRadius == radius);
 
-		//	radius = point.GetRadiusInObjectSpace();
-		//	prevRadius = radius;
-		//}
+			radius = point.GetRadiusInObjectSpace();
+			prevRadius = radius;
+		}
 
-		//return radius;
-		return 0;
+		return radius;
 	}
 
 
 	double CylinderObject::GetHeight() const
 	{
-		//return m_CylinderSpatialObject->GetHeight();
+		assert(m_CylinderSpatialObject->GetPoints().size() == 2);
 
-		//double prevHeight = -1;
-		//double height;
+		auto position = m_CylinderSpatialObject->GetPoints()[1].GetPositionInObjectSpace();
+		assert(position.size() == 3);
 
-		//for (auto point : m_CylinderSpatialObject->GetPoints()) {
-		//	if (-1 != prevHeight
-		//		&& prevHeight != height) {
-		//		std::exception e("Cylinder's height is gnarled in CylinderObject::GetHeight");
-		//		throw e;
-		//	}
-
-		//	height = point.GetPositionInObjectSpace();
-		//	prevHeight = height;
-		//}
-
-		//return height;
-
-		return 0;
+		auto height = position[2];
+		return height;
 	}
 
 

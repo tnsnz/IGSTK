@@ -231,6 +231,10 @@ CrossHairSpatialObject
 
   bool validPosition = true; 
 
+  if (m_BoundingBox.IsNull())
+      return;
+
+
   const BoundingBoxType::BoundsArrayType &bounds = m_BoundingBox->GetBounds();
 
   if( m_CursorPositionToBeSet[0] < bounds[0] || 
@@ -317,7 +321,7 @@ CrossHairSpatialObject
 ::GetBoundingBoxDimensionByIndex(unsigned int index) const
 {
 
-  if(index >= 6)
+  if(index >= 6 || m_BoundingBox.IsNull())
     {
     return 0;
     }

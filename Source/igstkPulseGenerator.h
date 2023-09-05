@@ -184,10 +184,10 @@ private:
 
   static unsigned int m_FreeTimeoutCount;
 
-  static unsigned int numberOfPulseGenerators;
+  static unsigned int m_NumberOfPulseGene;
 
   //mutable itk::SimpleFastMutexLock m_NumberOfPulseGeneratorsLock;
-  mutable std::mutex numberOfPulseGeneratorsLocker;
+  mutable std::recursive_mutex m_NumberOfPulseGeneratorsLock;
 
   static char         m_ResetClock;
   

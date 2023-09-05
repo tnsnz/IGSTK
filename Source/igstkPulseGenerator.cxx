@@ -47,7 +47,7 @@ PulseGenerator::Timeout * PulseGenerator::m_FreeTimeout  = 0;
 
 unsigned int PulseGenerator::m_FreeTimeoutCount = 0;
 
-unsigned int PulseGenerator::numberOfPulseGenerators = 0;
+unsigned int PulseGenerator::m_NumberOfPulseGene = 0;
 
 char PulseGenerator::m_ResetClock = 1;
 
@@ -59,9 +59,9 @@ double PulseGenerator::m_PreviousClock = 0.0;
 /** Constructor */
 PulseGenerator::PulseGenerator():m_StateMachine(this)
 {
-  this->numberOfPulseGeneratorsLocker.lock();
-  this->numberOfPulseGenerators++;
-  this->numberOfPulseGeneratorsLocker.unlock();
+  this->m_NumberOfPulseGeneratorsLock.lock();
+  this->m_NumberOfPulseGene++;
+  this->m_NumberOfPulseGeneratorsLock.unlock();
 
   igstkAddInputMacro( ValidFrequency );
   igstkAddInputMacro( InvalidLowFrequency );
@@ -145,10 +145,10 @@ PulseGenerator::PulseGenerator():m_StateMachine(this)
 
 PulseGenerator::~PulseGenerator()
 {
-  this->numberOfPulseGeneratorsLocker.lock();
-  this->numberOfPulseGenerators--;
+  this->m_NumberOfPulseGeneratorsLock.lock();
+  this->m_NumberOfPulseGene--;
 
-  if( numberOfPulseGenerators == 0 )
+  if( m_NumberOfPulseGene == 0 )
     {
     // Release any pending Timeouts.
     Timeout * t = m_FreeTimeout;
@@ -163,7 +163,7 @@ PulseGenerator::~PulseGenerator()
       }
     }
   
-  this->numberOfPulseGeneratorsLocker.unlock();
+  this->m_NumberOfPulseGeneratorsLock.unlock();
 }
 
 
