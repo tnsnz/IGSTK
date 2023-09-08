@@ -75,7 +75,20 @@ SerialCommunicationForWindows::InternalOpenPort( void )
 
   igstkLogMacro( DEBUG, "InternalOpenPort on " << device << "\n" );
 
-  portHandle = CreateFile(reinterpret_cast<LPCWSTR>(device),
+  auto ConvertToWString = [&](const char* charString) -> std::wstring {
+      std::locale loc("");
+      const std::ctype<wchar_t>& wideCharType = std::use_facet<std::ctype<wchar_t>>(loc);
+
+      std::wstring wideString;
+      while (*charString) {
+          wideString += wideCharType.widen(*charString);
+          ++charString;
+      }
+
+      return wideString;
+  };
+
+  portHandle = CreateFile(ConvertToWString(device).c_str(),
                           GENERIC_READ|GENERIC_WRITE,
                           0,  /* not allowed to share ports */
                           0,  /* child-processes don't inherit handle */

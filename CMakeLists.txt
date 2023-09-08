@@ -13,6 +13,16 @@ SET(IGSTK_VERSION_PATCH "0")
 SET (LIBRARY_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries." FORCE)
 SET (EXECUTABLE_OUTPUT_PATH ${IGSTK_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables." FORCE)
 
+# Unicode 문자 집합을 사용하도록 설정
+add_definitions(-DUNICODE -D_UNICODE)
+
+# 모든 솔루션의 문자 집합을 Unicode로 설정
+if(MSVC)
+    foreach(target ${IGSTKModuleMacros_TARGETS})
+        target_compile_options(${target} PRIVATE "/utf-8")
+    endforeach()
+endif()
+
 # Append the library version information to the library target properties.
 OPTION(IGSTK_WITH_LIBRARY_VERSION "Build with library version information" OFF)
 IF(IGSTK_WITH_LIBRARY_VERSION)
@@ -87,25 +97,28 @@ ENDIF(IGSTK_USE_FLTK)
 OPTION(IGSTK_USE_Qt "Use Qt for GUI" ON)
 IF(IGSTK_USE_Qt)
  # use what QVTK built with
+ include(vtkQt)
+ 
  SET(QT_QMAKE_EXECUTABLE ${QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
  SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
  SET(DESIRED_QT_VERSION ${VTK_QT_VERSION} CACHE STRING "")
 
- IF( DESIRED_QT_VERSION MATCHES 3 )
-    MESSAGE( FATAL_ERROR " VTK built using Qt 3. Please use Qt4" )
- ENDIF( DESIRED_QT_VERSION MATCHES 5)
+ IF(NOT ${DESIRED_QT_VERSION} MATCHES "5" )
+    MESSAGE( FATAL_ERROR " VTK built using Qt 5.15.2 Please use Qt 5.15.2" )
+ ENDIF()
 
- find_package(Qt5 REQUIRED QUIET COMPONENTS Widgets)
+ find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 
  IF(QT_USE_FILE)
+   Message(STATUS "ahi")
    INCLUDE(${QT_USE_FILE})
  ELSE(QT_USE_FILE)
-   SET(QT_LIBRARIES   ${QT_QT_LIBRARY})
+   SET(QT_LIBRARIES ${Qt5Widgets_LIBRARIES})
  ENDIF(QT_USE_FILE)
 
- INCLUDE_DIRECTORIES (${QT_INCLUDE_DIR})
-
+ INCLUDE_DIRECTORIES (${Qt5Widgets_INCLUDE_DIRS})
+ 
 ENDIF(IGSTK_USE_Qt)
 
 # The IGSTK Library
