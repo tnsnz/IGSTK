@@ -69,6 +69,7 @@ protected:
   /** Destructor */
   virtual ~View2D( void );
 
+  virtual void SetPickedPointCoordinates(double x, double y) override;
 private:
 
   /** Variables for managing the Orientation of the slices */

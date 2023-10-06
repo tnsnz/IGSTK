@@ -157,12 +157,15 @@ protected:
   void RequestInitializeRenderWindowInteractor();
 
   /** Sets the coordinates of the point picked */
-  void SetPickedPointCoordinates( double xPosition, double yPosition );
+  virtual void SetPickedPointCoordinates( double xPosition, double yPosition );
+
+  CoordinateSystem::Pointer GetPickerCoordSystem() const;
+  vtkWorldPointPicker* GetPointPicker() const;
+
+  /** Get renderer */
+  vtkRenderer* GetRenderer() const;
 
 private:
-
-  /** Get renderer */ 
-  vtkRenderer *  GetRenderer() const;
  
   /** Get render window */
   vtkRenderWindow * GetRenderWindow() const;

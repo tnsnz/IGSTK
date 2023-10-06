@@ -387,6 +387,7 @@ void View::RemoveActorProcessing()
 
 void View::SetPickedPointCoordinates( double x, double y )
 {
+    return;
   igstkLogMacro( DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
   this->m_PointPicker->Pick( x, y, 0, this->m_Renderer );
 
@@ -415,6 +416,16 @@ void View::SetPickedPointCoordinates( double x, double y )
   transformEvent.Set( transformCarrier );
 
   this->InvokeEvent( transformEvent );
+}
+
+CoordinateSystem::Pointer View::GetPickerCoordSystem() const
+{
+    return m_PickerCoordinateSystem;
+}
+
+vtkWorldPointPicker* View::GetPointPicker() const
+{
+    return m_PointPicker;
 }
  
 /** */

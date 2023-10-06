@@ -15,6 +15,7 @@
 
 =========================================================================*/
 #include "igstkView2D.h"
+#include "vtkWorldPointPicker.h"
 #include "vtkInteractorStyleImage.h"
 
 namespace igstk {
@@ -41,6 +42,42 @@ void View2D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "Orientation type " << m_Orientation << std::endl;  
+}
+
+void View2D::SetPickedPointCoordinates(double x, double y)
+{
+	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
+    
+    auto pointPicker = GetPointPicker();
+    auto renderer = GetRenderer();
+
+	pointPicker->Pick(x, y, 0, renderer);
+
+	double data[3];
+    pointPicker->GetPickPosition(data);
+
+	Transform::VectorType pickedPoint;
+	pickedPoint[0] = data[0];
+	pickedPoint[1] = data[1];
+	pickedPoint[2] = data[2];
+
+	double validityTime = itk::NumericTraits<double>::max();
+	double errorValue = 1.0; // this should be obtained from 
+							 // the picked object.
+
+	Transform transform;
+	transform.SetTranslation(pickedPoint, errorValue, validityTime);
+
+	CoordinateSystemTransformToResult transformCarrier;
+
+	transformCarrier.Initialize(transform,
+		this->GetPickerCoordSystem(),
+		this->GetCoordinateSystem());
+
+	CoordinateSystemTransformToEvent  transformEvent;
+	transformEvent.Set(transformCarrier);
+
+	this->InvokeEvent(transformEvent);
 }
 
 

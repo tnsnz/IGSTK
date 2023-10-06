@@ -144,6 +144,7 @@ void CylinderObjectRepresentation::CreateActors()
   cylinderActor->GetProperty()->SetOpacity(this->GetOpacity()); 
   cylinderMapper->SetInputData(m_CylinderSource->GetOutput());
   cylinderActor->SetMapper( cylinderMapper );
+  cylinderMapper->Update();
 
   // We align the actor in the Z direction such that the top of
   // the cylinder is at (0,0,-m_Height) and the tip at (0,0,0)
