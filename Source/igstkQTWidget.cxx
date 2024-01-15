@@ -267,7 +267,7 @@ QTWidget
 
       double position[2];
       position[0] = e->x();
-      position[1] = this->height()-e->y()-1;
+      position[1] = this->height() - e->y();
 
       this->m_ProxyView.SetPickedPointCoordinates(
                      this->m_View, position[0], position[1] );
@@ -319,9 +319,14 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
   if(e->buttons() == Qt::LeftButton)
     {
     // Get x,y,z in world coordinates from the clicked point
-    this->m_ProxyView.SetPickedPointCoordinates( this->m_View, e->x(), 
-                           this->height() - e->y() - 1); 
+    //this->m_ProxyView.SetPickedPointCoordinates( this->m_View, e->x(), 
+    //                       this->height() - e->y() - 1); 
     }
+
+  if (e->modifiers() & Qt::ShiftModifier) {
+      this->m_ProxyView.SetPickedPointCoordinates(this->m_View, e->x(),
+                                 this->height() - e->y()); 
+  }
 }
 
 /** This method is overridden to be able to enable/disable interaction 

@@ -350,6 +350,7 @@ ImageSpatialObjectRepresentation< TImageSpatialObject >
   m_SliceNumber = m_SliceNumberToBeSet;
 
   int ext[6];
+  this->UpdateRepresentationProcessing();
   m_ImageData->GetExtent( ext );
 
   switch( m_Orientation )

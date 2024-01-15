@@ -437,7 +437,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   m_ImageSpatialObject->RemoveObserver( obsId );
 
-  m_ImageData->UpdateInformation();
+  //m_ImageData->UpdateInformation();
   
   double range[2];
   m_ImageData->GetScalarRange(range);
@@ -459,7 +459,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   this->SetResliceInterpolate(m_ResliceInterpolate);
 
-  m_ImageData->GetWholeExtent(m_ImageExtent);
+  m_ImageData->GetExtent(m_ImageExtent);
 
   m_ImageData->GetOrigin(m_ImageOrigin);
 
@@ -608,7 +608,7 @@ ImageResliceObjectRepresentation< TImageSpatialObject >
 
   // Setting of vtkImageResliceMapper
 	m_ImageResliceMapper = vtkImageResliceMapper::New();
-  m_ImageResliceMapper->SetInput(m_ImageData);
+  m_ImageResliceMapper->SetInputData(m_ImageData);
   m_ImageResliceMapper->SetSlicePlane(m_Plane);
   m_ImageResliceMapper->BorderOn();
 

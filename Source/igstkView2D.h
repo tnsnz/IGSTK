@@ -61,6 +61,8 @@ public:
 
   /** Select a slice orientation */
   void RequestSetOrientation( const OrientationType & orientation );
+  void SetPickedPoint(igstk::Transform::VectorType pickedPoint);
+  virtual void zoomAutomatically() override;
 
 protected:
   /** Constructor */
@@ -70,6 +72,7 @@ protected:
   virtual ~View2D( void );
 
   virtual void SetPickedPointCoordinates(double x, double y) override;
+
 private:
 
   /** Variables for managing the Orientation of the slices */
@@ -79,6 +82,9 @@ private:
   View2D(const View2D& ); // purposely not implemented
   View2D& operator=(const View2D& ); // purposely not implemented
 
+  void syncPick(Transform::VectorType &pickedPoint);
+  void finishSyncPick(Transform::VectorType& pickedPoint);
+  Transform::VectorType prevPickedPoint;
 };
 
 } // end namespace igstk

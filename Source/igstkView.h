@@ -137,6 +137,8 @@ public:
   /** Set camera zoom factor */
   void SetCameraZoomFactor( double rate );
 
+  virtual void zoomAutomatically();
+
   friend class ViewProxyBase;
 
 protected:
@@ -162,8 +164,11 @@ protected:
   CoordinateSystem::Pointer GetPickerCoordSystem() const;
   vtkWorldPointPicker* GetPointPicker() const;
 
-  /** Get renderer */
   vtkRenderer* GetRenderer() const;
+  vtkCamera* GetCamera() const;
+
+  double prevFocal[3];
+  double diffFocal[3];
 
 private:
  

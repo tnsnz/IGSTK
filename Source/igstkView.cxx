@@ -21,7 +21,6 @@
 
 // vtk include files
 #include "vtkVersion.h"
-#include "vtkCommand.h"
 #include "vtkWindowToImageFilter.h"
 #include "vtkPNGWriter.h"
 #include "vtkViewport.h"
@@ -288,10 +287,14 @@ View::~View()
     }
 }
 
-/** Get renderer */ 
 vtkRenderer *  View::GetRenderer() const
 {
   return this->m_Renderer; 
+}
+
+vtkCamera* View::GetCamera() const
+{
+    return m_Camera;
 }
  
 /** Get render window */
@@ -558,7 +561,17 @@ void View::SetCameraPosition( double x, double y, double z )
 void View::SetCameraFocalPoint( double x, double y, double z )
 {
   igstkLogMacro( DEBUG, "igstkView::SetCameraFocalPoint(...) called ...\n");
+  auto focal = this->m_Camera->GetFocalPoint();
+
+  prevFocal[0] = focal[0];
+  prevFocal[1] = focal[1];
+  prevFocal[2] = focal[2];
+
   this->m_Camera->SetFocalPoint( x,y,z );
+
+  diffFocal[0] = prevFocal[0] - x;
+  diffFocal[1] = prevFocal[1] - y;
+  diffFocal[2] = prevFocal[2] - z;
 }
 
 /** Set camera view up vector */
@@ -598,6 +611,10 @@ SetCameraZoomFactor( double factor )
 {
   igstkLogMacro( DEBUG, "igstkView::SetCameraZoomFactor(...) called ...\n");
   this->m_Camera->Zoom( factor );
+}
+
+void View::zoomAutomatically()
+{
 }
 
 /** Define the refresh rate by programming the internal pulse generator */
