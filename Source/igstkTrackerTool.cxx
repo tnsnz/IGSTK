@@ -393,7 +393,10 @@ void TrackerTool::ReportTrackerToolVisibleStateProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportTrackerToolVisibleStateProcessing called ...\n");
 
-  this->InvokeEvent( TrackerToolMadeTransitionToTrackedStateEvent() );
+  auto evt = TrackerToolMadeTransitionToTrackedStateEvent();
+  evt.Set(m_TrackerToolIdentifier);
+
+  this->InvokeEvent(evt);
 }
 
 /** Report tracker tool not available state. */ 
@@ -402,7 +405,10 @@ void TrackerTool::ReportTrackerToolNotAvailableProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::ReportTrackerToolNotAvailableProcessing called ...\n");
 
-  this->InvokeEvent( TrackerToolNotAvailableToBeTrackedEvent() );
+  auto evt = TrackerToolNotAvailableToBeTrackedEvent();
+  evt.Set(m_TrackerToolIdentifier);
+
+  this->InvokeEvent(evt);
 }
 
 /** Report tracking started */ 
