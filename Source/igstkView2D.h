@@ -83,7 +83,7 @@ private:
   View2D& operator=(const View2D& ); // purposely not implemented
 
   void syncPick(Transform::VectorType &pickedPoint);
-  void finishSyncPick(Transform::VectorType& pickedPoint);
+  void finishSyncPick(Transform::VectorType pickedPoint);
   Transform::VectorType prevPickedPoint;
 };
 

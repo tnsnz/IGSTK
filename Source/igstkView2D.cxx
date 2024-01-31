@@ -123,10 +123,10 @@ void View2D::syncPick(Transform::VectorType &pickedPoint)
         pickedPoint[1] = prevPickedPoint[1];
     }
 
-    finishSyncPick(pickedPoint);
+    //finishSyncPick(pickedPoint);
 }
 
-void View2D::finishSyncPick(Transform::VectorType &pickedPoint)
+void View2D::finishSyncPick(Transform::VectorType pickedPoint)
 {
     prevPickedPoint = pickedPoint;
 }
