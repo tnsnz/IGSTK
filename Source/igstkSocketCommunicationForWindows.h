@@ -84,6 +84,12 @@ private:
     WSADATA m_sWSADATA;
     SOCKET m_Socket;
 
+public:
+    void RegisterInternalRead(void(*cbFunc)(std::string)) override;
+
+protected:
+    void(*m_pGetInternalRead)(std::string);
+
 };
 
 } // end namespace igstk

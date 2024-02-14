@@ -23,6 +23,8 @@
 #include "igstkSocketCommunication.h"
 #include "igstkNDIErrorEvent.h"
 
+#include <mutex>
+
 //#define CONFIG_USE_LEGACY_CMD
 
 namespace igstk
@@ -769,7 +771,19 @@ public:
 #ifdef CONFIG_USE_LEGACY_CMD
     this->Command("TSTART:");
 #else
+            
+      const char* reply = this->Command("Set Param.GPIO.Configure.Function.4=1");
+    std::cout <<"Set Param.GPIO.Configure.Function.4=1 : reply : " << std::string(reply);
+    reply = this->Command("STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\"");
+    std::cout << "STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\" : reply : " << std::string(reply);
+
+
     this->Command("TSTART ");
+
+    reply = this->Command("Set Param.GPIO.Configure.Polarity.4=1");
+    std::cout << "Set Param.GPIO.Configure.Polarity.4=1 : reply : " << std::string(reply);
+
+    
 #endif
   }
 
@@ -1675,6 +1689,8 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   void(*m_pGetReplyCommandFunc)(char*, int, char*, int);
+
+  std::mutex m_mutex;
 };
 
 }

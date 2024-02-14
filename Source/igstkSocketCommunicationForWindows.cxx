@@ -28,7 +28,7 @@ namespace igstk
 
 SocketCommunicationForWindows::SocketCommunicationForWindows() : m_StateMachine(this)
 {
-
+    m_pGetInternalRead = NULL;
 }
 
 SocketCommunicationForWindows::~SocketCommunicationForWindows()
@@ -90,7 +90,7 @@ SocketCommunicationForWindows::InternalRead( char *data,
                                              unsigned int n,
                                              unsigned int &bytesRead )
 {
-    cout << "SocketCommunicationForWindows::InternalRead() called..." << endl;
+    //cout << "SocketCommunicationForWindows::InternalRead() called..." << endl;
     char lastChar = '\0';
     std::string response;
 
@@ -114,7 +114,10 @@ SocketCommunicationForWindows::InternalRead( char *data,
 
     bytesRead = strlen(data);
 
-    cout << "SocketCommunicationForWindows::InternalRead() called... read = " << response << endl;
+    //cout << "SocketCommunicationForWindows::InternalRead() called... read = " << response << endl;
+
+    if (m_pGetInternalRead)
+        m_pGetInternalRead(response);
 
     return SUCCESS;
 }
@@ -192,6 +195,14 @@ int SocketCommunicationForWindows::read(char* buffer, int length) const
 {
     int result = recv(m_Socket, buffer, length, MSG_WAITALL);
     return result;
+}
+
+void SocketCommunicationForWindows::RegisterInternalRead(void(*cbFunc)(std::string))
+{
+    if (cbFunc)
+    {
+        m_pGetInternalRead = cbFunc;
+    }
 }
 
 } // end namespace igstk

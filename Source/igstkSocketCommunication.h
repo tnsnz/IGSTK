@@ -275,6 +275,9 @@ private:
 
   /** Helper function to map a return value to an input */
   const InputType &MapResultToInput( int condition );
+
+public:
+    virtual void RegisterInternalRead(void(*cbFunc)(std::string)) = 0;
 };
 
 } // end namespace igstk

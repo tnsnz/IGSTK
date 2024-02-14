@@ -806,6 +806,9 @@ int NDICommandInterpreter::ReadAsciiReply(unsigned int offset)
 /** Send a command to the device via the Communication object. */
 const char* NDICommandInterpreter::Command(const char* command)
 {
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
   unsigned int i;
   unsigned int nc;
   char* cp, *rp, *crp;
