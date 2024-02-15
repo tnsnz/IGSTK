@@ -24,6 +24,7 @@
 #include "igstkNDIErrorEvent.h"
 
 #include <mutex>
+#include "qdebug.h"
 
 //#define CONFIG_USE_LEGACY_CMD
 
@@ -768,20 +769,19 @@ public:
 
   /** Put the device into tracking mode. */
   void TSTART() {
+
+    const char* reply = this->Command("Set Param.GPIO.Configure.Function.4=1");
+    qDebug() <<"Set Param.GPIO.Configure.Function.4=1 : reply : " << QString::fromStdString( std::string(reply) );
+    reply = this->Command("STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\"");
+    qDebug() << "STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\" : reply : " << QString::fromStdString( std::string(reply));
+
 #ifdef CONFIG_USE_LEGACY_CMD
     this->Command("TSTART:");
 #else
-            
-      const char* reply = this->Command("Set Param.GPIO.Configure.Function.4=1");
-    std::cout <<"Set Param.GPIO.Configure.Function.4=1 : reply : " << std::string(reply);
-    reply = this->Command("STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\"");
-    std::cout << "STREAM --diff=true --cmd=\"Get Param.GPIO.Configure.Value.4\" : reply : " << std::string(reply);
-
-
     this->Command("TSTART ");
 
     reply = this->Command("Set Param.GPIO.Configure.Polarity.4=1");
-    std::cout << "Set Param.GPIO.Configure.Polarity.4=1 : reply : " << std::string(reply);
+    qDebug() << "Set Param.GPIO.Configure.Polarity.4=1 : reply : " << QString::fromStdString( std::string(reply));
 
     
 #endif

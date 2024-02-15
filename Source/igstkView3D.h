@@ -49,12 +49,17 @@ public:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
+  Transform::VectorType GetPickedPoint();
+
 protected:
   /** Constructor */
   View3D( );
 
   /** Destructor */
   virtual ~View3D( void );
+
+  virtual void SetPickedPointCoordinates(double x, double y) override;
+  Transform::VectorType m_ptPicked;
 
 private:
   View3D(const View3D& ); // purposely not implemented
