@@ -58,7 +58,7 @@ protected:
   /** Destructor */
   virtual ~View3D( void );
 
-  virtual void SetPickedPointCoordinates(double x, double y) override;
+  virtual void SetPickedPointCoordinates(double x, double y, QMouseEvent* e) override;
   Transform::VectorType m_ptPicked;
 
 private:

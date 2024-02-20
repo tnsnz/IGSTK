@@ -388,7 +388,7 @@ void View::RemoveActorProcessing()
   this->m_PointPicker->DeletePickList( this->m_ActorToBeRemoved );
 }
 
-void View::SetPickedPointCoordinates( double x, double y )
+void View::SetPickedPointCoordinates( double x, double y, QMouseEvent* e)
 {
     return;
   igstkLogMacro( DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");

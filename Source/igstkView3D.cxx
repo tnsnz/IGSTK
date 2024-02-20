@@ -52,8 +52,10 @@ Transform::VectorType View3D::GetPickedPoint()
 	return m_ptPicked;
 }
 
-void View3D::SetPickedPointCoordinates(double x, double y)
+void View3D::SetPickedPointCoordinates(double x, double y, QMouseEvent* e)
 {
+	if (e->button() != Qt::RightButton)
+		return;
 
 	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
 

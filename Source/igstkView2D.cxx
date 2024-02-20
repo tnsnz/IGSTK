@@ -70,8 +70,11 @@ void View2D::zoomAutomatically()
     RequestStart();
 }
 
-void View2D::SetPickedPointCoordinates(double x, double y)
+void View2D::SetPickedPointCoordinates(double x, double y, QMouseEvent* e)
 {
+    if (e->button() != Qt::LeftButton)
+        return;
+
 	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
     
     auto pointPicker = GetPointPicker();

@@ -49,6 +49,8 @@ class vtkWorldPointPicker;
 
 #include "igstkCoordinateSystemInterfaceMacros.h"
 
+#include "qevent.h"
+
 namespace igstk {
 
 /** \class View
@@ -159,7 +161,7 @@ protected:
   void RequestInitializeRenderWindowInteractor();
 
   /** Sets the coordinates of the point picked */
-  virtual void SetPickedPointCoordinates( double xPosition, double yPosition );
+  virtual void SetPickedPointCoordinates( double xPosition, double yPosition, QMouseEvent* e);
 
   CoordinateSystem::Pointer GetPickerCoordSystem() const;
   vtkWorldPointPicker* GetPointPicker() const;

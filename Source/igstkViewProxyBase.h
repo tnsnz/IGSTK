@@ -17,6 +17,8 @@
 #ifndef __igstkViewProxyBase_h
 #define __igstkViewProxyBase_h
 
+#include <qevent.h>
+
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
@@ -56,7 +58,8 @@ protected:
   /** Set PickedPoint coordinates */
   void SetPickedPointCoordinates( View * view, 
                                   double xPickedPoint ,
-                                  double yPickedPoint );
+                                  double yPickedPoint ,
+                                    QMouseEvent* e);
 private:
 
 };

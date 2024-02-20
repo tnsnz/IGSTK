@@ -48,9 +48,10 @@ void
 ViewProxyBase
 ::SetPickedPointCoordinates( View * view, 
                              double xPickedPoint,
-                             double yPickedPoint)
+                             double yPickedPoint,
+                                QMouseEvent* e)
 {
-  view->SetPickedPointCoordinates( xPickedPoint, yPickedPoint );
+  view->SetPickedPointCoordinates( xPickedPoint, yPickedPoint, e );
 }
 
 } // end namespace igstk
