@@ -51,6 +51,8 @@ class vtkWorldPointPicker;
 
 #include "qevent.h"
 
+#include "vtkGenericOpenGLRenderWindow.h"
+
 namespace igstk {
 
 /** \class View
@@ -143,6 +145,9 @@ public:
 
   friend class ViewProxyBase;
 
+  void setPointRegMode(bool);
+  bool isPointRegMode();
+
 protected:
 
   View( );
@@ -161,7 +166,7 @@ protected:
   void RequestInitializeRenderWindowInteractor();
 
   /** Sets the coordinates of the point picked */
-  virtual void SetPickedPointCoordinates( double xPosition, double yPosition, QMouseEvent* e);
+  virtual void SetPickedPointCoordinates( double xPosition, double yPosition);
 
   CoordinateSystem::Pointer GetPickerCoordSystem() const;
   vtkWorldPointPicker* GetPointPicker() const;
@@ -171,6 +176,8 @@ protected:
 
   double prevFocal[3];
   double diffFocal[3];
+
+  bool pointRegMode = false;
 
 private:
  
@@ -242,7 +249,7 @@ private:
   
 private:
  
-  vtkRenderWindow       * m_RenderWindow;
+  vtkGenericOpenGLRenderWindow * m_RenderWindow;
   vtkRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
   vtkWorldPointPicker   * m_PointPicker;

@@ -265,12 +265,15 @@ QTWidget
       {
       interactor->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
 
-      double position[2];
-      position[0] = e->x();
-      position[1] = this->height() - e->y();
+      if (!m_View->isPointRegMode())
+      {
+          double position[2];
+          position[0] = e->x();
+          position[1] = this->height() - e->y();
 
-      this->m_ProxyView.SetPickedPointCoordinates(
-                     this->m_View, position[0], position[1], e);
+          this->m_ProxyView.SetPickedPointCoordinates(
+              this->m_View, position[0], position[1]);
+      }
       break;
       }
     case Qt::MidButton:
@@ -281,13 +284,15 @@ QTWidget
     {
         interactor->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
 
+        if (m_View->isPointRegMode())
+        {
+            double position[2];
+            position[0] = e->x();
+            position[1] = this->height() - e->y();
 
-        double position[2];
-        position[0] = e->x();
-        position[1] = this->height() - e->y();
-
-        this->m_ProxyView.SetPickedPointCoordinates(
-            this->m_View, position[0], position[1], e);
+            this->m_ProxyView.SetPickedPointCoordinates(
+                this->m_View, position[0], position[1]);
+        }
         break;
     }
     default:
@@ -334,7 +339,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
 
   if (e->modifiers() & Qt::ShiftModifier) {
       this->m_ProxyView.SetPickedPointCoordinates(this->m_View, e->x(),
-                                 this->height() - e->y(), e); 
+                                 this->height() - e->y()); 
   }
 }
 

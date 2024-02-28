@@ -88,9 +88,9 @@ public:
     }
 
   /** Set the PickedPoint coordinates */
-  void SetPickedPointCoordinates( View * view, double x, double y, QMouseEvent* e)
+  void SetPickedPointCoordinates( View * view, double x, double y)
     {
-    ViewProxyBase::SetPickedPointCoordinates( view, x, y, e);
+    ViewProxyBase::SetPickedPointCoordinates( view, x, y);
     }
 
 

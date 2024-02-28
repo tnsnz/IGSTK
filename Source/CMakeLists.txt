@@ -135,6 +135,7 @@ IF(IGSTK_USE_Qt)
       igstkQMouseTracker.h
       igstkQMouseTrackerTool.h
       igstkQTWidget.h
+	  GLWidget.h
    )
 ENDIF(IGSTK_USE_Qt)
 
@@ -360,6 +361,7 @@ IF(IGSTK_USE_Qt)
       igstkQMouseTracker.cxx
       igstkQMouseTrackerTool.cxx
       igstkQTWidget.cxx
+	  GLWidget.cxx
    )
 ENDIF(IGSTK_USE_Qt)
 

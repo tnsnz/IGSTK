@@ -57,9 +57,8 @@ protected:
 
   /** Set PickedPoint coordinates */
   void SetPickedPointCoordinates( View * view, 
-                                  double xPickedPoint ,
-                                  double yPickedPoint ,
-                                    QMouseEvent* e);
+                                  double xPickedPoint,
+                                  double yPickedPoint);
 private:
 
 };

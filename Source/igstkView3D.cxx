@@ -29,10 +29,6 @@ View3D::View3D( ) : m_StateMachine(this)
                                      vtkInteractorStyleTrackballCamera::New();
   this->SetInteractorStyle( interactorStyle );
   interactorStyle->Delete();
-
-  m_ptPicked[0] = -1;
-  m_ptPicked[1] = -1;
-  m_ptPicked[2] = -1;
 }
 
 /** Destructor */
@@ -47,16 +43,8 @@ void View3D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
   this->Superclass::PrintSelf(os,indent);
 }
 
-Transform::VectorType View3D::GetPickedPoint()
+void View3D::SetPickedPointCoordinates(double x, double y)
 {
-	return m_ptPicked;
-}
-
-void View3D::SetPickedPointCoordinates(double x, double y, QMouseEvent* e)
-{
-	if (e->button() != Qt::RightButton)
-		return;
-
 	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
 
 	auto pointPicker = GetPointPicker();
@@ -68,13 +56,9 @@ void View3D::SetPickedPointCoordinates(double x, double y, QMouseEvent* e)
 	pointPicker->GetPickPosition(data);
 
 	Transform::VectorType pickedPoint;
-	m_ptPicked[0] = data[0];
-	m_ptPicked[1] = data[1];
-	m_ptPicked[2] = data[2];
-
-	//qDebug() << "m_ptPicked[0] : " << m_ptPicked[0]
-	//	<< "m_ptPicked[1] : " << m_ptPicked[1]
-	//	<< "m_ptPicked[2] : " << m_ptPicked[2];
+	pickedPoint[0] = data[0];
+	pickedPoint[1] = data[1];
+	pickedPoint[2] = data[2];
 
 	double validityTime = itk::NumericTraits<double>::max();
 	double errorValue = 1.0; // this should be obtained from 

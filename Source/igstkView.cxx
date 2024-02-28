@@ -54,7 +54,7 @@ m_StateMachine(this)
   this->m_Logger = NULL;
   
   // Create a default render window
-  this->m_RenderWindow = vtkRenderWindow::New();
+  this->m_RenderWindow = vtkGenericOpenGLRenderWindow::New();
   this->m_Renderer = vtkRenderer::New();
   this->m_RenderWindowInteractor = RenderWindowInteractor::New();
 
@@ -388,7 +388,7 @@ void View::RemoveActorProcessing()
   this->m_PointPicker->DeletePickList( this->m_ActorToBeRemoved );
 }
 
-void View::SetPickedPointCoordinates( double x, double y, QMouseEvent* e)
+void View::SetPickedPointCoordinates( double x, double y)
 {
     return;
   igstkLogMacro( DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
@@ -615,6 +615,16 @@ SetCameraZoomFactor( double factor )
 
 void View::zoomAutomatically()
 {
+}
+
+void View::setPointRegMode(bool f)
+{
+    pointRegMode = f;
+}
+
+bool View::isPointRegMode()
+{
+    return pointRegMode;
 }
 
 /** Define the refresh rate by programming the internal pulse generator */

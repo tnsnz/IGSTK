@@ -71,7 +71,7 @@ protected:
   /** Destructor */
   virtual ~View2D( void );
 
-  virtual void SetPickedPointCoordinates(double x, double y, QMouseEvent* e) override;
+  virtual void SetPickedPointCoordinates(double x, double y) override;
 
 private:
 
