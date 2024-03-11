@@ -830,6 +830,10 @@ const char* NDICommandInterpreter::Command(const char* command)
   {
 	  m_SerialComm->PurgeBuffers();
   }
+  else if (m_SocketComm.IsNotNull())
+  {
+      m_SocketComm->ClearBuffers();
+  }
 
   /* if the command is NULL, send a break to reset the device */
   if (command == 0)

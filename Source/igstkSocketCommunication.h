@@ -124,6 +124,8 @@ public:
   /** Declarations related to the Logger. */
   igstkLoggerMacro();
 
+  virtual void ClearBuffers() {}
+
 protected:
 
   SocketCommunication();

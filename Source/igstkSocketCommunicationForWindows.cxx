@@ -106,7 +106,17 @@ SocketCommunicationForWindows::InternalRead( char *data,
 
 	while (useTerminationCharacter && lastChar != terminationCharacter)
     {
-        read(&lastChar, 1);
+        int result = recv(m_Socket, &lastChar, 1, 0);
+        
+        if (result == SOCKET_ERROR)
+        {
+            int error = WSAGetLastError();
+            if (error == WSAEWOULDBLOCK)
+            {
+                Sleep(200);
+            }
+            continue;
+        }
         response += lastChar;
     }
 #endif
@@ -120,6 +130,12 @@ SocketCommunicationForWindows::InternalRead( char *data,
         m_pGetInternalRead(response);
 
     return SUCCESS;
+}
+
+void SocketCommunicationForWindows::ClearBuffers()
+{
+    char lastChar = '\0';
+    do {} while (recv(m_Socket, &lastChar, 1, 0) > 0);
 }
 
 
@@ -174,6 +190,15 @@ bool SocketCommunicationForWindows::connect(std::string serialNumber, std::strin
         {
             // Convert the IP address to a character array
             inet_ntop(AF_INET, (PVOID) & ((const sockaddr_in*)aiPointer->ai_addr)->sin_addr, m_Ip4Address, INET_ADDRSTRLEN);
+
+            u_long mode = 1;
+            if (ioctlsocket(m_Socket, FIONBIO, &mode) == SOCKET_ERROR)
+            {
+                closesocket(m_Socket);
+                WSACleanup();
+                continue;
+            }
+
             break;
         }
         disconnect();

@@ -70,6 +70,8 @@ protected:
   /** Print object information. */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
+  virtual void ClearBuffers();
+
   void init();
 
   bool connect(std::string serialNumber, std::string portNumber);
