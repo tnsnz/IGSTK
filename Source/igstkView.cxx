@@ -55,7 +55,7 @@ m_StateMachine(this)
   
   // Create a default render window
   this->m_RenderWindow = vtkGenericOpenGLRenderWindow::New();
-  this->m_Renderer = vtkRenderer::New();
+  this->m_Renderer = vtkOpenGLRenderer::New();
   this->m_RenderWindowInteractor = RenderWindowInteractor::New();
 
   this->m_RenderWindow->AddRenderer( this->m_Renderer );

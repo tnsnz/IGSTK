@@ -282,12 +282,14 @@ namespace igstk
 	}
 #endif
 
-	void GLWidget::showEvent(QShowEvent*)
+	void GLWidget::showEvent(QShowEvent* evt)
 	{
 		if (!isValid())
 		{
 			qApp->processEvents();
 		}
+
+		QVTKOpenGLNativeWidget::showEvent(evt);
 	}
 
 	void GLWidget::ReportInvalidRequestProcessing()

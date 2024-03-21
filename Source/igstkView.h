@@ -52,6 +52,7 @@ class vtkWorldPointPicker;
 #include "qevent.h"
 
 #include "vtkGenericOpenGLRenderWindow.h"
+#include "vtkOpenGLRenderer.h"
 
 namespace igstk {
 
@@ -250,7 +251,7 @@ private:
 private:
  
   vtkGenericOpenGLRenderWindow * m_RenderWindow;
-  vtkRenderer           * m_Renderer;
+  vtkOpenGLRenderer           * m_Renderer;
   vtkCamera             * m_Camera;
   vtkWorldPointPicker   * m_PointPicker;
 
