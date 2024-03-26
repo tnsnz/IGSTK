@@ -112,6 +112,9 @@ private:
 igstkLoadedEventMacro( CoordinateSystemTransformToEvent, 
                   IGSTKEvent, CoordinateSystemTransformToResult );
 
+igstkEventMacro(InitPickPointEvent,
+    IGSTKEvent);
+
 } // end namespace igstk
 
 #endif 
