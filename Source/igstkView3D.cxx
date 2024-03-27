@@ -45,6 +45,9 @@ void View3D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
 
 void View3D::SetPickedPointCoordinates(double x, double y)
 {
+	InitPickPointEvent initPickPointEvt;
+	this->InvokeEvent(initPickPointEvt);
+
 	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
 
 	auto pointPicker = GetPointPicker();

@@ -149,6 +149,9 @@ public:
   void setPointRegMode(bool);
   bool isPointRegMode();
 
+  /** Method that will refresh the view.. and the GUI */
+  void RefreshRender();
+
 protected:
 
   View( );
@@ -202,9 +205,6 @@ private:
   /** Add and remove RepresentationObject classes */
   void AddObjectProcessing();
   void RemoveObjectProcessing();
-
-  /** Method that will refresh the view.. and the GUI */
-  void RefreshRender();
 
   /** Request add actor */
   void RequestAddActor( vtkProp * actor );
