@@ -1465,10 +1465,6 @@ protected:
   /** Print object information */
   virtual void PrintSelf( std::ostream& os, itk::Indent indent ) const; 
 
-  const char* InternalCommand(const char* command);
-
-  std::mutex MutexForCommand;
-
 private:
 
   /** Maximum number of handles that will ever be in use simultaneously */
@@ -1683,6 +1679,7 @@ private:
 
   void(*m_pGetReplyCommandFunc)(char*, int, char*, int);
 
+  std::mutex m_mutex;
 };
 
 }
