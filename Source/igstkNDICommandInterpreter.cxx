@@ -806,158 +806,168 @@ int NDICommandInterpreter::ReadAsciiReply(unsigned int offset)
 /** Send a command to the device via the Communication object. */
 const char* NDICommandInterpreter::Command(const char* command)
 {
+    this->MutexForCommand.lock();
 
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const char* reply = this->InternalCommand(command);
 
-  unsigned int i;
-  unsigned int nc;
-  char* cp, *rp, *crp;
+    this->MutexForCommand.unlock();
 
-  cp = m_SerialCommand;      /* text sent to device */
-  rp = m_SerialReply;        /* text received from device */
-  crp = m_CommandReply;      /* received text, with CRC hacked off */
-  nc = 0;                    /* length of 'command' part of command */
+    return reply;
+}
 
-  rp[0] = '\0';
-  crp[0] = '\0';
+const char* NDICommandInterpreter::InternalCommand(const char* command)
+{
+    unsigned int i;
+    unsigned int nc;
+    char* cp, * rp, * crp;
 
-  /* clear error */
-  this->SetErrorCode(0);
+    cp = m_SerialCommand;      /* text sent to device */
+    rp = m_SerialReply;        /* text received from device */
+    crp = m_CommandReply;      /* received text, with CRC hacked off */
+    nc = 0;                    /* length of 'command' part of command */
 
-  /* purge the buffer, because anything that we haven't read or
-     written yet is garbage left over by a previously failed command */
-  if (m_SerialComm.IsNotNull())
-  {
-	  m_SerialComm->PurgeBuffers();
-  }
-  else if (m_SocketComm.IsNotNull())
-  {
-      m_SocketComm->ClearBuffers();
-  }
+    rp[0] = '\0';
+    crp[0] = '\0';
 
-  /* if the command is NULL, send a break to reset the device */
-  if (command == 0)
+    /* clear error */
+    this->SetErrorCode(0);
+
+    /* purge the buffer, because anything that we haven't read or
+       written yet is garbage left over by a previously failed command */
+    if (m_SerialComm.IsNotNull())
     {
-    /* serial break will force tracking to stop */
-    m_Tracking = 0;
-	if (m_SerialComm.IsNotNull())
-		m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
-
-    /* set m_SerialCommand to null string */ 
-    cp[0] = '\0';
-    this->WriteSerialBreak();
+        m_SerialComm->PurgeBuffers();
     }
-  else
+    else if (m_SocketComm.IsNotNull())
     {
-    /* copy command into m_SerialCommand */
-    if (cp != command)
-      {
-      for (i = 0; i < NDI_MAX_COMMAND_SIZE; i++)
-        {
-        if ((cp[i] = command[i]) == 0)
-          {
-          break;
-          }
-        }
-      }
-
-    /* change m_Tracking  if either TSTOP or INIT is sent  */ 
-    if( ( cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0) ) ||
-        ( cp[1] == 'I' && (strncmp(cp, "INIT",  4) == 0) )    )
-      {
-      m_Tracking = 0;
-	  if (m_SerialComm.IsNotNull())
-		m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
-      }
-
-    /* add a CRC, write the data, and get command prefix size in "nc" */
-    this->WriteCommand(&nc);
+        m_SocketComm->ClearBuffers();
     }
 
-  /* read the reply from the device */
-  if (m_ErrorCode == 0)
-    {
-    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
-      {
-      /* the BX command needs special handling */
-      this->ReadBinaryReply(0);
-      }
-    else
-      {
-      this->ReadAsciiReply(0);
-      }
-    }
-  
-  /* if the command was NULL, check reset reply */
-  if (m_ErrorCode == 0)
-    {
+    /* if the command is NULL, send a break to reset the device */
     if (command == 0)
-      {
-      if (strncmp(crp, "RESET", 5) != 0)
-        {
-        this->SetErrorCode(NDI_RESET_FAIL);
-        }
-      }
+    {
+        /* serial break will force tracking to stop */
+        m_Tracking = 0;
+        if (m_SerialComm.IsNotNull())
+            m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+
+        /* set m_SerialCommand to null string */
+        cp[0] = '\0';
+        this->WriteSerialBreak();
     }
-    
-  /* do any needed processing of the reply */
-  if (m_ErrorCode == 0)
+    else
+    {
+        /* copy command into m_SerialCommand */
+        if (cp != command)
+        {
+            for (i = 0; i < NDI_MAX_COMMAND_SIZE; i++)
+            {
+                if ((cp[i] = command[i]) == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        /* change m_Tracking  if either TSTOP or INIT is sent  */
+        if ((cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0)) ||
+            (cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0)))
+        {
+            m_Tracking = 0;
+            if (m_SerialComm.IsNotNull())
+                m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
+        }
+
+        /* add a CRC, write the data, and get command prefix size in "nc" */
+        this->WriteCommand(&nc);
+    }
+
+    /* read the reply from the device */
+    if (m_ErrorCode == 0)
+    {
+        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+        {
+            /* the BX command needs special handling */
+            this->ReadBinaryReply(0);
+        }
+        else
+        {
+            this->ReadAsciiReply(0);
+        }
+    }
+
+    /* if the command was NULL, check reset reply */
+    if (m_ErrorCode == 0)
+    {
+        if (command == 0)
+        {
+            if (strncmp(crp, "RESET", 5) != 0)
+            {
+                this->SetErrorCode(NDI_RESET_FAIL);
+            }
+        }
+    }
+
+    /* do any needed processing of the reply */
+    if (m_ErrorCode == 0)
     {
 
-    if (cp[0] == 'T' && nc == 6 && strncmp(cp, "TSTART", nc) == 0)
-      {
-      /* if TSTART, then decrease the timeout, since otherwise the
-         system will freeze for 5 seconds each time there is a error */
-		if (m_SerialComm.IsNotNull())
-			m_SerialComm->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
-      m_Tracking = 1;
-      }
+        if (cp[0] == 'T' && nc == 6 && strncmp(cp, "TSTART", nc) == 0)
+        {
+            /* if TSTART, then decrease the timeout, since otherwise the
+               system will freeze for 5 seconds each time there is a error */
+            if (m_SerialComm.IsNotNull())
+                m_SerialComm->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
+            m_Tracking = 1;
+        }
 
-    /*----------------------------------------*/
-    /* special behavior for specific commands */
+        /*----------------------------------------*/
+        /* special behavior for specific commands */
 
-    if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
-      { /* the BX command */
-      HelperForBX(cp, crp);
-      }
-    else if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
-      { /* the TX command */
-      HelperForTX(cp, crp);
-      }
-    else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
-      {
-      HelperForCOMM(cp, crp);
-      }
-    else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
-      {
-      HelperForIRCHK(cp, crp);
-      }
-    else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0)
-      {
-      HelperForPHINF(cp, crp);
-      }
-    else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0)
-      {
-      HelperForPHRQ(cp, crp);
-      }
-    else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
-      {
-      HelperForPHSR(cp, crp);
-      }
-    else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
-      {
-      HelperForSSTAT(cp, crp);
-      }
-    else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0)
-      {
-      HelperForVER(cp, crp);
-      }
+        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
+        { /* the BX command */
+            HelperForBX(cp, crp);
+        }
+        else if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
+        { /* the TX command */
+            HelperForTX(cp, crp);
+        }
+        else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
+        {
+            HelperForCOMM(cp, crp);
+        }
+        else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
+        {
+            HelperForIRCHK(cp, crp);
+        }
+        else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0)
+        {
+            HelperForPHINF(cp, crp);
+        }
+        else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0)
+        {
+            HelperForPHRQ(cp, crp);
+        }
+        else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
+        {
+            HelperForPHSR(cp, crp);
+        }
+        else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
+        {
+            HelperForSSTAT(cp, crp);
+        }
+        else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0)
+        {
+            HelperForVER(cp, crp);
+        }
     }
 
-  /* return the device's reply, but with the CRC hacked off */
-  if (m_pGetReplyCommandFunc)
-	  m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp, strlen(crp));
-  return crp;
+    /* return the device's reply, but with the CRC hacked off */
+    if (m_pGetReplyCommandFunc)
+        m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp, strlen(crp));
+
+    return crp;
+
 }
 
 /** Use printf-style formatting to create a command. */
