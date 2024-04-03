@@ -1683,6 +1683,7 @@ private:
 
   void(*m_pGetReplyCommandFunc)(char*, int, char*, int);
 
+  std::mutex m_mutex;
 };
 
 }

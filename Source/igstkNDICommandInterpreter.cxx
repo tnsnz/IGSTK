@@ -819,12 +819,12 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
 {
     unsigned int i;
     unsigned int nc;
-    char* cp, * rp, * crp;
+    char *cp, *rp, *crp;
 
-    cp = m_SerialCommand;      /* text sent to device */
-    rp = m_SerialReply;        /* text received from device */
-    crp = m_CommandReply;      /* received text, with CRC hacked off */
-    nc = 0;                    /* length of 'command' part of command */
+    cp = m_SerialCommand; /* text sent to device */
+    rp = m_SerialReply; /* text received from device */
+    crp = m_CommandReply; /* received text, with CRC hacked off */
+    nc = 0; /* length of 'command' part of command */
 
     rp[0] = '\0';
     crp[0] = '\0';
@@ -833,19 +833,16 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
     this->SetErrorCode(0);
 
     /* purge the buffer, because anything that we haven't read or
-       written yet is garbage left over by a previously failed command */
-    if (m_SerialComm.IsNotNull())
-    {
+               written yet is garbage left over by a previously failed command
+   */
+    if (m_SerialComm.IsNotNull()) {
         m_SerialComm->PurgeBuffers();
-    }
-    else if (m_SocketComm.IsNotNull())
-    {
+    } else if (m_SocketComm.IsNotNull()) {
         m_SocketComm->ClearBuffers();
     }
 
     /* if the command is NULL, send a break to reset the device */
-    if (command == 0)
-    {
+    if (command == 0) {
         /* serial break will force tracking to stop */
         m_Tracking = 0;
         if (m_SerialComm.IsNotNull())
@@ -854,25 +851,18 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
         /* set m_SerialCommand to null string */
         cp[0] = '\0';
         this->WriteSerialBreak();
-    }
-    else
-    {
+    } else {
         /* copy command into m_SerialCommand */
-        if (cp != command)
-        {
-            for (i = 0; i < NDI_MAX_COMMAND_SIZE; i++)
-            {
-                if ((cp[i] = command[i]) == 0)
-                {
+        if (cp != command) {
+            for (i = 0; i < NDI_MAX_COMMAND_SIZE; i++) {
+                if ((cp[i] = command[i]) == 0) {
                     break;
                 }
             }
         }
 
         /* change m_Tracking  if either TSTOP or INIT is sent  */
-        if ((cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0)) ||
-            (cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0)))
-        {
+        if ((cp[0] == 'T' && (strncmp(cp, "TSTOP", 5) == 0)) || (cp[1] == 'I' && (strncmp(cp, "INIT", 4) == 0))) {
             m_Tracking = 0;
             if (m_SerialComm.IsNotNull())
                 m_SerialComm->SetTimeoutPeriod(NDI_NORMAL_TIMEOUT);
@@ -883,39 +873,30 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
     }
 
     /* read the reply from the device */
-    if (m_ErrorCode == 0)
-    {
-        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
-        {
+    if (m_ErrorCode == 0) {
+        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2) {
             /* the BX command needs special handling */
             this->ReadBinaryReply(0);
-        }
-        else
-        {
+        } else {
             this->ReadAsciiReply(0);
         }
     }
 
     /* if the command was NULL, check reset reply */
-    if (m_ErrorCode == 0)
-    {
-        if (command == 0)
-        {
-            if (strncmp(crp, "RESET", 5) != 0)
-            {
+    if (m_ErrorCode == 0) {
+        if (command == 0) {
+            if (strncmp(crp, "RESET", 5) != 0) {
                 this->SetErrorCode(NDI_RESET_FAIL);
             }
         }
     }
 
     /* do any needed processing of the reply */
-    if (m_ErrorCode == 0)
-    {
-
-        if (cp[0] == 'T' && nc == 6 && strncmp(cp, "TSTART", nc) == 0)
-        {
+    if (m_ErrorCode == 0) {
+        if (cp[0] == 'T' && nc == 6 && strncmp(cp, "TSTART", nc) == 0) {
             /* if TSTART, then decrease the timeout, since otherwise the
-               system will freeze for 5 seconds each time there is a error */
+                     system will freeze for 5 seconds each time there is a error
+       */
             if (m_SerialComm.IsNotNull())
                 m_SerialComm->SetTimeoutPeriod(NDI_TRACKING_TIMEOUT);
             m_Tracking = 1;
@@ -924,97 +905,116 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
         /*----------------------------------------*/
         /* special behavior for specific commands */
 
-        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2)
-        { /* the BX command */
+        if (cp[0] == 'B' && cp[1] == 'X' && nc == 2) { /* the BX command */
             HelperForBX(cp, crp);
-        }
-        else if (cp[0] == 'T' && cp[1] == 'X' && nc == 2)
-        { /* the TX command */
+        } else if (cp[0] == 'T' && cp[1] == 'X' && nc == 2) { /* the TX command */
             HelperForTX(cp, crp);
-        }
-        else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0)
-        {
+        } else if (cp[0] == 'C' && nc == 4 && strncmp(cp, "COMM", nc) == 0) {
             HelperForCOMM(cp, crp);
-        }
-        else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0)
-        {
+        } else if (cp[0] == 'I' && nc == 5 && strncmp(cp, "IRCHK", nc) == 0) {
             HelperForIRCHK(cp, crp);
-        }
-        else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0)
-        {
+        } else if (cp[0] == 'P' && nc == 5 && strncmp(cp, "PHINF", nc) == 0) {
             HelperForPHINF(cp, crp);
-        }
-        else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0)
-        {
+        } else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHRQ", nc) == 0) {
             HelperForPHRQ(cp, crp);
-        }
-        else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0)
-        {
+        } else if (cp[0] == 'P' && nc == 4 && strncmp(cp, "PHSR", nc) == 0) {
             HelperForPHSR(cp, crp);
-        }
-        else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0)
-        {
+        } else if (cp[0] == 'S' && nc == 5 && strncmp(cp, "SSTAT", nc) == 0) {
             HelperForSSTAT(cp, crp);
-        }
-        else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0)
-        {
+        } else if (cp[0] == 'V' && nc == 3 && strncmp(cp, "VER", nc) == 0) {
             HelperForVER(cp, crp);
         }
     }
 
     /* return the device's reply, but with the CRC hacked off */
     if (m_pGetReplyCommandFunc)
-        m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp, strlen(crp));
+        m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp,
+            strlen(crp));
 
     return crp;
-
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a, int b)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
-                                           int c)
+    int c)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
-                                           int c, int d)
+    int c, int d)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, int a, int b,
-                                           const char* c)
+    const char* c)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Use printf-style formatting to create a command. */
 const char* NDICommandInterpreter::Command(const char* format, const char* a,
-                                           const char* b, const char* c,
-                                           const char* d, const char* e)
+    const char* b, const char* c,
+    const char* d, const char* e)
 {
-  snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d, e);
-  return this->Command(m_SerialCommand);
+    this->MutexForCommand.lock();
+
+    snprintf(m_SerialCommand, NDI_MAX_COMMAND_SIZE, format, a, b, c, d, e);
+    const char* reply = this->InternalCommand(m_SerialCommand);
+
+    this->MutexForCommand.unlock();
+
+    return reply;
 }
 
 /** Return data that was received from a PHINF command. */
