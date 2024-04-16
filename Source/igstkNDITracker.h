@@ -81,6 +81,7 @@ protected:
 
   /** Update the status and the transforms. 
       This function is called by a separate thread. */
+  virtual ResultType InternalThreadedCheckGPIOStatus( void );
   virtual ResultType InternalThreadedUpdateStatus( void );
 
   /** Reset the tracking device to put it back to its original state. */

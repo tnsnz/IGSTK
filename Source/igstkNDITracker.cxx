@@ -357,6 +357,18 @@ NDITracker::ResultType NDITracker::InternalUpdateStatus()
   return SUCCESS;
 }
 
+NDITracker::ResultType NDITracker::InternalThreadedCheckGPIOStatus(void)
+{
+	igstkLogMacro(DEBUG, "igstk::NDITracker::InternalThreadedCheckGPIOStatus"
+		"called ...\n");
+
+    m_CommandInterpreter->Command("GetInfo Param.GPIO.Configure.Value.4");
+
+    ResultType result = this->CheckError(m_CommandInterpreter);
+
+	return result;
+}
+
 /** Update the m_StatusBuffer and the transforms. 
     This function is called by a separate thread. */
 NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
@@ -377,7 +389,9 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
 
   // lock the buffer
   //m_BufferLock->Lock();
-  m_BufferLock.lock();
+  if (result == SUCCESS)
+  {
+      m_BufferLock.lock();
 
   // Initialize transformations to identity.
   // The NDI transform is 8 values:
@@ -394,9 +408,6 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
   transform.push_back ( 0.0 );
   transform.push_back ( 0.0 );
   transform.push_back ( 0.0 );
-
-  if (result == SUCCESS)
-    {
 
     typedef PortHandleContainerType::iterator  IteratorType;
 
@@ -437,6 +448,8 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
 
       ++inputItr;
       }
+
+    m_BufferLock.unlock();
     }
 
   // In the original vtkNDITracker code, there was a check at this
@@ -444,7 +457,6 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
 
   // unlock the buffer
   //m_BufferLock->Unlock();
-  m_BufferLock.unlock();
 
   return result;
 }

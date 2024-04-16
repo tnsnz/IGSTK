@@ -204,6 +204,9 @@ protected:
       This method is called in a separate thread.
       This method is to be implemented by a descendant class
       and responsible for device-specific processing */
+  virtual ResultType InternalThreadedCheckGPIOStatus(void) {
+      return SUCCESS;
+  };
   virtual ResultType InternalThreadedUpdateStatus( void ) = 0;
 
   /** Print the object information in a stream. */
@@ -319,6 +322,7 @@ private:
 
   /** Tracking ThreadID */
   int                             m_ThreadID;
+  int                             gpioThreadID;
 
   /** itk::ConditionVariable object pointer to signal for the next
    *  transform */
@@ -363,6 +367,7 @@ private:
   ResultType RequestRemoveTool( TrackerToolType * trackerTool );
 
   /** Thread function for tracking */
+  static itk::ITK_THREAD_RETURN_TYPE GPIOStatusThreadFunction(void* pInfoStruct);
   static itk::ITK_THREAD_RETURN_TYPE TrackingThreadFunction(void* pInfoStruct);
 
   /** The "UpdateStatus" method is used for updating the status of 

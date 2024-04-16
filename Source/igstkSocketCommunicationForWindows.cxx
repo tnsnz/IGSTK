@@ -17,7 +17,6 @@
 
 /* standard include files */
 #include <iostream>
-#include <stdio.h>
 
 #include "igstkConfigure.h"
 #include "igstkSocketCommunicationForWindows.h"
@@ -111,9 +110,9 @@ SocketCommunicationForWindows::InternalRead( char *data,
         if (result == SOCKET_ERROR)
         {
             int error = WSAGetLastError();
-            if (error == WSAEWOULDBLOCK)
+            if (WSAEWOULDBLOCK == error)
             {
-                Sleep(200);
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
             }
             continue;
         }
@@ -123,8 +122,6 @@ SocketCommunicationForWindows::InternalRead( char *data,
     strcpy(data, response.c_str());
 
     bytesRead = strlen(data);
-
-    //cout << "SocketCommunicationForWindows::InternalRead() called... read = " << response << endl;
 
     if (m_pGetInternalRead)
         m_pGetInternalRead(response);

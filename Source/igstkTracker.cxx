@@ -690,6 +690,7 @@ void Tracker::EnterTrackingStateProcessing( void )
   if ( ! m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
     m_ThreadID = m_Threader->SpawnThread( TrackingThreadFunction, this );
+    gpioThreadID = m_Threader->SpawnThread(GPIOStatusThreadFunction, this);
     m_TrackingThreadStarted= true;
     }
 
@@ -728,6 +729,7 @@ void Tracker::ExitTrackingTerminatingTrackingThread( void )
   if ( this->GetThreadingEnabled() )
     {
     m_Threader->TerminateThread( m_ThreadID );
+    m_Threader->TerminateThread(gpioThreadID);
     m_TrackingThreadStarted = false;
     }
 }
@@ -881,6 +883,7 @@ void Tracker::CloseFromTrackingStateProcessing( void )
   if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
     m_Threader->TerminateThread( m_ThreadID );
+    m_Threader->TerminateThread(gpioThreadID);
     m_TrackingThreadStarted = false;
     }
 
@@ -927,6 +930,7 @@ void Tracker::CloseFromCommunicatingStateProcessing( void )
   if ( m_TrackingThreadStarted && this->GetThreadingEnabled() )
     {
     m_Threader->TerminateThread( m_ThreadID );
+    m_Threader->TerminateThread(gpioThreadID);
     m_TrackingThreadStarted = false;
     }
 
@@ -1045,6 +1049,53 @@ Tracker::GetTrackerToolContainer() const
   return m_TrackerTools;
 }
 
+itk::ITK_THREAD_RETURN_TYPE Tracker::GPIOStatusThreadFunction(void* pInfoStruct)
+{
+	struct itk::PlatformMultiThreader::WorkUnitInfo* pInfo =
+		(struct itk::PlatformMultiThreader::WorkUnitInfo*)pInfoStruct;
+
+	if (pInfo == NULL)
+	{
+		return ITK_THREAD_RETURN_DEFAULT_VALUE;
+	}
+
+	if (pInfo->UserData == NULL)
+	{
+		return ITK_THREAD_RETURN_DEFAULT_VALUE;
+	}
+
+	Tracker* pTracker = (Tracker*)pInfo->UserData;
+
+	// counters for error rates
+	unsigned long errorCount = 0;
+	unsigned long totalCount = 0;
+
+	int activeFlag = 1;
+	while (activeFlag)
+	{
+		ResultType result = pTracker->InternalThreadedCheckGPIOStatus();
+
+		totalCount++;
+		if (result != SUCCESS)
+		{
+			errorCount++;
+		}
+
+		// check to see if we are being told to quit 
+		pInfo->ActiveFlagLock->lock();
+		activeFlag = *pInfo->ActiveFlag;
+		pInfo->ActiveFlagLock->unlock();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
+
+	igstkLogMacroStatic(pTracker, DEBUG, "GPIOStatusThreadFunction was "
+		"terminated, " << errorCount << " errors "
+		"out of " << totalCount << "updates." << std::endl);
+
+	return ITK_THREAD_RETURN_DEFAULT_VALUE;
+}
+
 /** Thread function for tracking */
 itk::ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
 {
@@ -1084,6 +1135,7 @@ itk::ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
     pInfo->ActiveFlagLock->lock();
     activeFlag = *pInfo->ActiveFlag;
     pInfo->ActiveFlagLock->unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
   
   igstkLogMacroStatic(pTracker, DEBUG, "TrackingThreadFunction was "
