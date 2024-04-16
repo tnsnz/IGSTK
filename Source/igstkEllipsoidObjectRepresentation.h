@@ -78,7 +78,7 @@ private:
   EllipsoidObjectType::ConstPointer   m_EllipsoidObject;
 
   /** VTK class that generates the geometrical representation of the cylinder */
-  vtkSuperquadricSource * m_EllipsoidSource;
+  vtkSuperquadricSource* m_EllipsoidSource;
 
   /** update the visual representation with changes in the geometry */
   virtual void UpdateRepresentationProcessing();

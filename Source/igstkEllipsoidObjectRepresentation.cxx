@@ -149,6 +149,8 @@ void EllipsoidObjectRepresentation::CreateActors()
   ellipsoidMapper->SetInputData( m_EllipsoidSource->GetOutput() );
   ellipsoidActor->SetMapper(ellipsoidMapper);
 
+  ellipsoidMapper->Update();
+
   // We should check if the actor doesn't exist
   this->AddActor( ellipsoidActor );
   ellipsoidMapper->Delete();
