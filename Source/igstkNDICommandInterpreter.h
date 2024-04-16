@@ -419,8 +419,6 @@ public:
   SerialCommunication* GetSerialCommunication();
   SocketCommunication* GetSocketCommunication();
 
-  void RegisterReplyCommand(void(*cbFunc)(char*, int, char*, int));
-
   /** Send a text command to the device and receive a text reply.
    *  \param command the command to send, without the trailing CRC
    *  \return       the text reply from the device with the 
@@ -1680,8 +1678,6 @@ private:
 
   NDICommandInterpreter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  void(*m_pGetReplyCommandFunc)(char*, int, char*, int);
 
   std::mutex m_mutex;
 };

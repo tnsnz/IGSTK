@@ -11,6 +11,7 @@
 #include "igstkViewProxy.h"
 
 #include "QVTKOpenGLNativeWidget.h"
+#include <QPoint>
 
 namespace igstk {
 
@@ -63,6 +64,11 @@ namespace igstk {
 		vtkRenderer* renderer = nullptr;
 		vtkRenderWindowInteractor* renderWindowInteractor = nullptr;
 		bool interactionHandling = true;
+
+		int frameSkipWeight = 0;
+
+		QPoint prevFocusedPoint;
+		QPoint lastFocusedPoint;
 
 		igstkDeclareStateMacro(Idle);
 		igstkDeclareStateMacro(ViewConnected);

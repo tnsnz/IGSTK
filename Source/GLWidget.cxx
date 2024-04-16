@@ -17,7 +17,7 @@
 #include "igstkEvents.h"
 
 #include "GLWidget.h"
-
+#include <QTimer>
 namespace igstk
 {
 	GLWidget::GLWidget(QWidget* qparent, Qt::WindowFlags f) :
@@ -247,8 +247,30 @@ namespace igstk
 		}
 
 		if (e->modifiers() & Qt::ShiftModifier) {
-			this->proxyView.SetPickedPointCoordinates(this->view, e->x(),
-				this->height() - e->y());
+			prevFocusedPoint = e->pos();
+
+			if (0 == frameSkipWeight % 5)
+			{
+				this->proxyView.SetPickedPointCoordinates(this->view, e->x(),
+					this->height() - e->y());
+				
+				lastFocusedPoint = e->pos();
+
+				QTimer::singleShot
+				(0, [&]() -> void
+					{
+						if (lastFocusedPoint != prevFocusedPoint)
+						{
+							this->proxyView.SetPickedPointCoordinates(this->view, prevFocusedPoint.x(),
+								this->height() - prevFocusedPoint.y());
+						}
+
+						lastFocusedPoint = prevFocusedPoint;
+						frameSkipWeight = 0;
+					}
+				);
+			}
+			frameSkipWeight = (frameSkipWeight % 5) + 1;
 		}
 	}
 

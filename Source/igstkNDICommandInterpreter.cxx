@@ -54,8 +54,6 @@ NDICommandInterpreter::NDICommandInterpreter():m_StateMachine(this)
 
   m_Tracking = 0;
   m_ErrorCode = 0;
-
-  m_pGetReplyCommandFunc = NULL;
 }
 
 /** Destructor: free any memory that has been allocated. */
@@ -927,10 +925,6 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
     }
 
     /* return the device's reply, but with the CRC hacked off */
-    if (m_pGetReplyCommandFunc)
-        m_pGetReplyCommandFunc(m_SerialCommand, strlen(m_SerialCommand), crp,
-            strlen(crp));
-
     return crp;
 }
 
@@ -2503,14 +2497,6 @@ void NDICommandInterpreter::PrintSelf(std::ostream& os,
 
   os << indent << "Tracking: " << m_Tracking << std::endl;
   os << indent << "ErrorCode: " << m_ErrorCode << std::endl;
-}
-
-void NDICommandInterpreter::RegisterReplyCommand(void(*cbFunc)(char*, int, char*, int))
-{
-	if (cbFunc)
-	{
-		m_pGetReplyCommandFunc = cbFunc;
-	}
 }
 
 }
