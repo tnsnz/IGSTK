@@ -41,14 +41,14 @@ void EllipsoidObject::SetRadius( double rx, double ry, double rz )
   radius[0] = rx;
   radius[1] = ry;
   radius[2] = rz;
-  m_EllipseSpatialObject->SetRadiusInObjectSpace( radius );
+  m_EllipseSpatialObject->SetRadius( radius );
 }
 
 
 /** Set the radii along each axis */
 void EllipsoidObject::SetRadius( const ArrayType & radii )
 {
-  m_EllipseSpatialObject->SetRadiusInObjectSpace( radii );
+  m_EllipseSpatialObject->SetRadius( radii );
 }
 
 

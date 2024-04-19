@@ -103,6 +103,7 @@ SocketCommunicationForWindows::InternalRead( char *data,
 	char terminationCharacter = this->GetReadTerminationCharacter();
 	bool useTerminationCharacter = this->GetUseReadTerminationCharacter();
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	while (useTerminationCharacter && lastChar != terminationCharacter)
     {
         int result = recv(m_Socket, &lastChar, 1, 0);
@@ -112,7 +113,7 @@ SocketCommunicationForWindows::InternalRead( char *data,
             int error = WSAGetLastError();
             if (WSAEWOULDBLOCK == error)
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
             continue;
         }
