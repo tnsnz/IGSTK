@@ -45,9 +45,12 @@ namespace igstk {
 
 		void mouseReleaseEvent(QMouseEvent* e);
 		void mouseMoveEvent(QMouseEvent* e);
+		void mouseDoubleClickEvent(QMouseEvent*);
 		void mousePressEvent(QMouseEvent* e);
 		void wheelEvent(QWheelEvent* e);
 		void showEvent(QShowEvent*);
+
+		bool doubleClicked = false;
 
 	private:
 		void ReportInvalidRequestProcessing();

@@ -23,6 +23,8 @@ namespace igstk
 	GLWidget::GLWidget(QWidget* qparent, Qt::WindowFlags f) :
 		QVTKOpenGLNativeWidget(qparent, f), m_StateMachine(this), proxyView(this)
 	{
+		setAttribute(Qt::WA_AcceptTouchEvents);
+
 		this->m_Logger = nullptr;
 		this->view = ViewType::New();
 
@@ -63,6 +65,7 @@ namespace igstk
 	void GLWidget::SetRenderWindowInteractor(vtkRenderWindowInteractor* interactor)
 	{
 		this->renderWindowInteractor = interactor;
+		renderWindowInteractor->SetRecognizeGestures(true);
 	}
 
 	vtkRenderWindowInteractor* GLWidget::GetRenderWindowInteractor() const
@@ -149,7 +152,7 @@ namespace igstk
 			interactor->InvokeEvent(vtkCommand::LeftButtonPressEvent, e);
 			break;
 
-		case Qt::MidButton:
+		case Qt::MiddleButton:
 			interactor->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
 			break;
 
@@ -184,20 +187,28 @@ namespace igstk
 		{
 		case Qt::LeftButton:
 		{
-			interactor->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
-
-			if (!view->isPointRegMode())
+			if (doubleClicked)
 			{
-				double position[2];
-				position[0] = e->x();
-				position[1] = height() - e->y();
+				interactor->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
+				doubleClicked = false;
+			}
+			else
+			{
+				interactor->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, e);
 
-				this->proxyView.SetPickedPointCoordinates(
-					this->view, position[0], position[1]);
+				if (!view->isPointRegMode())
+				{
+					double position[2];
+					position[0] = e->x();
+					position[1] = height() - e->y();
+
+					this->proxyView.SetPickedPointCoordinates(
+						this->view, position[0], position[1]);
+				}
 			}
 			break;
 		}
-		case Qt::MidButton:
+		case Qt::MiddleButton:
 			interactor->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, e);
 			break;
 
@@ -253,7 +264,7 @@ namespace igstk
 			{
 				this->proxyView.SetPickedPointCoordinates(this->view, e->x(),
 					this->height() - e->y());
-				
+
 				lastFocusedPoint = e->pos();
 
 				QTimer::singleShot
@@ -272,6 +283,28 @@ namespace igstk
 			}
 			frameSkipWeight = (frameSkipWeight % 5) + 1;
 		}
+	}
+
+	void GLWidget::mouseDoubleClickEvent(QMouseEvent* e)
+	{
+		vtkRenderWindowInteractor* interactor = nullptr;
+		auto renWin = GetRenderWindow();
+		if (renWin)
+		{
+			interactor = renWin->GetInteractor();
+		}
+
+		if (!interactor || !interactor->GetEnabled() || !this->interactionHandling)
+		{
+			return;
+		}
+
+		interactor->SetEventInformationFlipY(e->x(), e->y(),
+			(e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0,
+			(e->modifiers() & Qt::ShiftModifier) > 0 ? 1 : 0);
+
+		interactor->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
+		doubleClicked = true;
 	}
 
 #ifndef QT_NO_WHEELEVENT
