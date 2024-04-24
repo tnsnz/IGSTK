@@ -307,7 +307,7 @@ AddVideoImagerToolToInternalDataContainers(
     "igstk::WebcamWinVideoImager::AddVideoImagerToolToInternalDataContainers "
                  "called ...\n");
 
-  if ( imagerTool == NULL )
+  if ( imagerTool == nullptr )
     {
     return FAILURE;
     }

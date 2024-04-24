@@ -49,7 +49,7 @@ public:
 
   ViewProxy( )
     {
-    this->m_Widget = NULL;
+    this->m_Widget = nullptr;
     }
 
   ViewProxy( WidgetType * widget )

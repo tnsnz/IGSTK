@@ -34,7 +34,7 @@ View3D::View3D( ) : m_StateMachine(this)
 /** Destructor */
 View3D::~View3D()
 {
-  this->SetInteractorStyle( NULL );
+  this->SetInteractorStyle( nullptr );
 }
 
 /** Print object information */

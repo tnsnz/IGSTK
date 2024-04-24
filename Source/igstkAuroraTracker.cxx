@@ -67,7 +67,7 @@ AuroraTracker::ResultType AuroraTracker
   AuroraTrackerToolType * auroraTrackerTool = 
              dynamic_cast< AuroraTrackerToolType * > ( trackerToolNonConst );   
 
-  if ( auroraTrackerTool == NULL )
+  if ( auroraTrackerTool == nullptr )
     {
     igstkLogMacro ( DEBUG, "Tracker tool probably not aurora type " );
     return FAILURE;
@@ -439,7 +439,7 @@ RemoveTrackerToolFromInternalDataContainers
     "igstk::AuroraTracker::RemoveTrackerToolFromInternalDataContainers "
     "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

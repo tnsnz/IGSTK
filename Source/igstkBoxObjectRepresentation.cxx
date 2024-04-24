@@ -30,7 +30,7 @@ BoxObjectRepresentation::BoxObjectRepresentation():m_StateMachine(this)
   igstkLogMacro( DEBUG, "Constructor called ....\n");
 
   // We create the ellipse spatial object
-  m_BoxSpatialObject = NULL;
+  m_BoxSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_BoxSpatialObject );
   m_BoxSource = vtkCubeSource::New();
   
@@ -60,7 +60,7 @@ BoxObjectRepresentation::~BoxObjectRepresentation()
   if( m_BoxSource )
     {
     m_BoxSource->Delete();
-    m_BoxSource = NULL;
+    m_BoxSource = nullptr;
     }
   this->DeleteActors();
 }
@@ -101,7 +101,7 @@ void BoxObjectRepresentation::SetBoxObjectProcessing()
   m_BoxSpatialObject = m_BoxObjectToAdd;
   this->RequestSetSpatialObject( m_BoxSpatialObject );
 
-  if( m_BoxSource != NULL )
+  if( m_BoxSource != nullptr )
     {
     m_BoxSource->SetCenter(0, 0, 0);
     m_BoxSource->SetXLength(m_BoxSpatialObject->GetSizeX());

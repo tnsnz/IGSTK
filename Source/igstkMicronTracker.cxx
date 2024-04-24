@@ -71,7 +71,7 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
   this->m_Cameras = new Cameras();
 
   // initialize selected camera
-  this->m_SelectedCamera = NULL;
+  this->m_SelectedCamera = nullptr;
 
   // Camera light coolness
   this->m_CameraLightCoolness = 0.1;
@@ -89,17 +89,17 @@ MicronTracker::MicronTracker(void):m_StateMachine(this)
 /** Destructor */
 MicronTracker::~MicronTracker(void)
 {
-  if ( this->m_Cameras != NULL )
+  if ( this->m_Cameras != nullptr )
     {
     delete this->m_Cameras;
     }
 
-  if ( this->m_Markers != NULL )
+  if ( this->m_Markers != nullptr )
     {
     delete this->m_Markers;
     }
 
-  if ( this->m_Persistence != NULL )
+  if ( this->m_Persistence != nullptr )
     {
     delete this->m_Persistence;
     }
@@ -402,7 +402,7 @@ MicronTracker
   MicronTrackerToolType * micronTrackerTool  =
         dynamic_cast< MicronTrackerToolType *> ( trackerToolNonConst );
 
-  if ( micronTrackerTool == NULL )
+  if ( micronTrackerTool == nullptr )
     {
     igstkLogMacro ( DEBUG, "Tracker tool probably not Micron Tracker type " );
     return FAILURE;
@@ -620,11 +620,11 @@ MicronTracker::ResultType MicronTracker::InternalThreadedUpdateStatus( void )
     if (marker->wasIdentified(this->m_SelectedCamera) )
       {
       //Get postion and pose information
-      Xform3D* Marker2CurrCameraXf = NULL;
+      Xform3D* Marker2CurrCameraXf = nullptr;
       Marker2CurrCameraXf =
         marker->marker2CameraXf(this->m_SelectedCamera->Handle());
 
-      if(Marker2CurrCameraXf != NULL)
+      if(Marker2CurrCameraXf != nullptr)
         {
         // Tooltip calibration information which could be available in the
         // marker template file will not be used here. If needed, the 
@@ -698,7 +698,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     "igstk::MicronTracker::RemoveTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

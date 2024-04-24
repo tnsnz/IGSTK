@@ -34,15 +34,15 @@ namespace igstk
 // init static objects
 bool AtracsysEasyTrackTracker::m_BTrackingEnabled = false;
 bool AtracsysEasyTrackTracker::m_BDeviceOpened = false;
-glbDevice *AtracsysEasyTrackTracker::m_SpDevice = NULL;
+glbDevice *AtracsysEasyTrackTracker::m_SpDevice = nullptr;
 glbHandle AtracsysEasyTrackTracker::m_ShHandle;
 AtracsysEasyTrackTracker::PnpMarker *AtracsysEasyTrackTracker::m_SpMarkers[4] =
-                                                  { NULL, NULL, NULL, NULL };
+                                                  { nullptr, nullptr, nullptr, nullptr };
 unsigned AtracsysEasyTrackTracker::m_SuCounter = 0;
-AtracsysEasyTrackTracker* AtracsysEasyTrackTracker::m_TrackerObject = NULL;
+AtracsysEasyTrackTracker* AtracsysEasyTrackTracker::m_TrackerObject = nullptr;
 bool AtracsysEasyTrackTracker::m_HasError = false;
 unsigned int AtracsysEasyTrackTracker::m_ErrorCode = 0;
-char *AtracsysEasyTrackTracker::m_ErrorString = NULL;
+char *AtracsysEasyTrackTracker::m_ErrorString = nullptr;
 
 /** Constructor: Initializes all internal variables. */
 AtracsysEasyTrackTracker::AtracsysEasyTrackTracker(void) :
@@ -81,7 +81,7 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalOpen( voi
   apiSetErrorCallback( igstk::AtracsysEasyTrackTracker::ErrorCallback );
 
   // open and init ETK library. TODO: config file handling
-  m_ShHandle = apiInitialize( NULL );
+  m_ShHandle = apiInitialize( nullptr );
 
   // set pnp marker callback
   apiSetPnPMarkerCallback( m_ShHandle,
@@ -174,7 +174,7 @@ AtracsysEasyTrackTracker::ResultType AtracsysEasyTrackTracker::InternalStopTrack
   // set error to OKAY
   m_HasError = false;
 
-  apiSetMarkerCallback( m_ShHandle, NULL );
+  apiSetMarkerCallback( m_ShHandle, nullptr );
   apiStop(m_SpDevice);
 
   // check error
@@ -327,7 +327,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     "igstk::AtracsysEasyTrackTracker::AddTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

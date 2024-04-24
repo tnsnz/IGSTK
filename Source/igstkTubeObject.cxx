@@ -59,7 +59,7 @@ const TubeObject::PointType * TubeObject::GetPoint(unsigned int pointId) const
 {
   if(pointId >= m_TubeSpatialObject->GetPoints().size())
     {
-    return NULL;
+    return nullptr;
     }
 
   PointListType &points = m_TubeSpatialObject->GetPoints();

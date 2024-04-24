@@ -70,7 +70,7 @@ private:
 };
 
 /** This event is invoked when RequestComputeTransformTo is called with
- *  a NULL target coordinate system.
+ *  a nullptr target coordinate system.
  */
 igstkLoadedEventMacro( CoordinateSystemTransformToNullTargetEvent,
                        TransformNotAvailableEvent,

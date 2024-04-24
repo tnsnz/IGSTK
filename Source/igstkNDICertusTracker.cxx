@@ -153,7 +153,7 @@ NDICertusTracker::ResultType NDICertusTracker::InternalOpen( void )
    igstkLogMacro( DEBUG,
       "Determine system configuration...\n");
 
-   if( TransputerDetermineSystemCfg( NULL ) )
+   if( TransputerDetermineSystemCfg( nullptr ) )
     {
         igstkLogMacro( DEBUG,
       "Error in determining the system parameters.\n");
@@ -314,7 +314,7 @@ NDICertusTracker
   NDICertusTrackerToolType * certusTrackerTool  =
         dynamic_cast< NDICertusTrackerToolType *> ( trackerToolNonConst );
 
-  if ( certusTrackerTool == NULL )
+  if ( certusTrackerTool == nullptr )
     {
     return FAILURE;
     }
@@ -569,7 +569,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     "igstk::NDICertusTracker::AddTrackerToolFromInternalDataContainers "
                  "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

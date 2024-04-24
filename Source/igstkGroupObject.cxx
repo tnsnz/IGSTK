@@ -91,7 +91,7 @@ void GroupObject::RequestAddChild(
 {
   m_ChildToAdd = child;
   m_TransformToAdd = transform;
-  if( m_ChildToAdd == NULL )
+  if( m_ChildToAdd == nullptr )
     {
     igstkPushInputMacro( AddChildInvalid );
     m_StateMachine.ProcessInputs();

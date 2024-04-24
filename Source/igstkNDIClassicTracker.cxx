@@ -445,7 +445,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
   igstkLogMacro( DEBUG,
     "igstk::NDIClassicTracker::AddTrackerToolToInternalDataContainers called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }
@@ -473,7 +473,7 @@ RemoveTrackerToolFromInternalDataContainers
     "igstk::NDIClassicTracker::RemoveTrackerToolFromInternalDataContainers "
     "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

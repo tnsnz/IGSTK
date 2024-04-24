@@ -94,7 +94,7 @@ SerialCommunicationForWindows::InternalOpenPort( void )
                           0,  /* child-processes don't inherit handle */
                           OPEN_EXISTING, 
                           FILE_ATTRIBUTE_NORMAL,
-                          NULL); /* no template file */
+                          nullptr); /* no template file */
 
   if (portHandle == INVALID_HANDLE_VALUE)
     {
@@ -291,7 +291,7 @@ SerialCommunicationForWindows::InternalSendBreak( void )
   DWORD dumb;
   ResultType result = FAILURE;
 
-  ClearCommError(m_PortHandle,&dumb,NULL);  // clear error
+  ClearCommError(m_PortHandle,&dumb,nullptr);  // clear error
 
   if (SetCommBreak(m_PortHandle))
     {
@@ -314,7 +314,7 @@ SerialCommunicationForWindows::InternalPurgeBuffers( void )
   DWORD flushtype = PURGE_TXCLEAR | PURGE_RXCLEAR;
   ResultType result = FAILURE;
 
-  ClearCommError(m_PortHandle,&dumb,NULL);       // clear error
+  ClearCommError(m_PortHandle,&dumb,nullptr);       // clear error
   if (PurgeComm(m_PortHandle,flushtype))             // clear buffers
     {
     result = SUCCESS;
@@ -373,11 +373,11 @@ SerialCommunicationForWindows::InternalWrite( const char *data,
     while (n > 0)
       {
       if (WriteFile(m_PortHandle, &data[i],
-                    n, &m, NULL) == FALSE)
+                    n, &m, nullptr) == FALSE)
         {
         if (GetLastError() == ERROR_OPERATION_ABORTED) 
           { // system cancelled us so clear error and retry
-          ClearCommError(m_PortHandle,&dumb,NULL);
+          ClearCommError(m_PortHandle,&dumb,nullptr);
           }
         else
           {  // IO error occurred 
@@ -418,11 +418,11 @@ SerialCommunicationForWindows::InternalRead( char *data,
     while (n > 0)
       {
       if (ReadFile(m_PortHandle, &data[i],
-                   1, &m, NULL) == FALSE)
+                   1, &m, nullptr) == FALSE)
         { 
         if (GetLastError() == ERROR_OPERATION_ABORTED)
           { // cancelled 
-          ClearCommError(m_PortHandle,&dumb,NULL); // clear error and retry
+          ClearCommError(m_PortHandle,&dumb,nullptr); // clear error and retry
           }
         else
           { // IO error occurred

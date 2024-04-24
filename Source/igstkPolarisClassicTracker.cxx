@@ -78,7 +78,7 @@ PolarisClassicTracker::ResultType PolarisClassicTracker
   PolarisClassicTrackerToolType * polarisTrackerTool =
        dynamic_cast< PolarisClassicTrackerToolType * >( trackerToolNonConst );
 
-  if ( polarisTrackerTool == NULL )
+  if ( polarisTrackerTool == nullptr )
     {
     igstkLogMacro ( DEBUG, "polarisTrackerTool pointer is null\n" );
     return FAILURE;
@@ -572,7 +572,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
     "igstk::PolarisClassicTracker"
     "::AddTrackerToolToInternalDataContainers called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }
@@ -600,7 +600,7 @@ RemoveTrackerToolFromInternalDataContainers
     "igstk::PolarisClassicTracker::RemoveTrackerToolFromInternalDataContainers "
     "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

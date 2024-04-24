@@ -22,9 +22,9 @@ namespace igstk
 CoordinateSystemTransformToResult
 ::CoordinateSystemTransformToResult()
 {
-  m_Source = NULL;
-  m_Destination = NULL;
-  m_CommonAncestor = NULL;
+  m_Source = nullptr;
+  m_Destination = nullptr;
+  m_CommonAncestor = nullptr;
 }
 
 CoordinateSystemTransformToResult
@@ -57,9 +57,9 @@ CoordinateSystemTransformToResult
 ::Clear()
 {
   m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  m_Source = NULL;
-  m_Destination = NULL;
-  m_CommonAncestor = NULL;
+  m_Source = nullptr;
+  m_Destination = nullptr;
+  m_CommonAncestor = nullptr;
 }
 
 void

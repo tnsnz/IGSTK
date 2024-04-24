@@ -32,10 +32,10 @@ CrossHairObjectRepresentation::
 CrossHairObjectRepresentation():m_StateMachine(this)
 {
 
-  m_LineSourceZ = NULL;
-  m_LineSourceY = NULL;
-  m_LineSourceX = NULL;
-  m_LineProperty = NULL;
+  m_LineSourceZ = nullptr;
+  m_LineSourceY = nullptr;
+  m_LineSourceX = nullptr;
+  m_LineProperty = nullptr;
 
   m_ImageBounds[0] = 0;
   m_ImageBounds[1] = 0;
@@ -48,7 +48,7 @@ CrossHairObjectRepresentation():m_StateMachine(this)
 
   m_CrossHairPositionObserver = CrossHairPositionObserver::New();
 
-  m_CrossHairSpatialObject = NULL;
+  m_CrossHairSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_CrossHairSpatialObject );
 
   //List of states
@@ -86,28 +86,28 @@ CrossHairObjectRepresentation
 {
   this->DeleteActors();
   
-  if (m_LineProperty != NULL)
+  if (m_LineProperty != nullptr)
     {
     m_LineProperty->Delete();
-    m_LineProperty=NULL;
+    m_LineProperty=nullptr;
     }
 
-  if (m_LineSourceZ != NULL)
+  if (m_LineSourceZ != nullptr)
     {
     m_LineSourceZ->Delete();
-    m_LineSourceZ=NULL;
+    m_LineSourceZ=nullptr;
     }
 
-  if (m_LineSourceY != NULL)
+  if (m_LineSourceY != nullptr)
     {
     m_LineSourceY->Delete();
-    m_LineSourceY=NULL;
+    m_LineSourceY=nullptr;
     }
 
-  if (m_LineSourceX != NULL)
+  if (m_LineSourceX != nullptr)
     {
     m_LineSourceX->Delete();
-    m_LineSourceX=NULL;
+    m_LineSourceX=nullptr;
     }
 }
 
@@ -140,7 +140,7 @@ CrossHairObjectRepresentation
     }
   m_LineWidth = width;
 
-  if ( m_LineProperty != NULL )
+  if ( m_LineProperty != nullptr )
     {
     m_LineProperty->SetLineWidth(m_LineWidth);
     }

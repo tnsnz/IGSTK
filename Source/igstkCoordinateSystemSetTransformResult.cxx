@@ -22,8 +22,8 @@ namespace igstk
 CoordinateSystemSetTransformResult
 ::CoordinateSystemSetTransformResult()
 {
-  m_Source = NULL;
-  m_Destination = NULL;
+  m_Source = nullptr;
+  m_Destination = nullptr;
   m_IsAttach = false;
 }
 
@@ -57,8 +57,8 @@ CoordinateSystemSetTransformResult
 ::Clear()
 {
   m_Transform.SetToIdentity( ::igstk::TimeStamp::GetLongestPossibleTime() );
-  m_Source = NULL;
-  m_Destination = NULL;
+  m_Source = nullptr;
+  m_Destination = nullptr;
   m_IsAttach  = false;
 }
 

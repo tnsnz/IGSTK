@@ -555,7 +555,7 @@ igstk::Frame* VideoImagerTool::GetFrameFromBuffer(const unsigned int index)
     {
     igstkLogMacro( FATAL,
     "Exception in GetFrameFromBuffer (igstkVideoImagerTool): " << e.what());
-    return NULL;
+    return nullptr;
     }
 }
 
@@ -570,7 +570,7 @@ igstk::Frame* VideoImagerTool::GetTemporalCalibratedFrame()
     igstkLogMacro( FATAL,
               "Exception in GetTemporalCalibratedFrame (igstkVideoImagerTool): "
                                                                    << e.what());
-    return NULL;
+    return nullptr;
     }
 }
 

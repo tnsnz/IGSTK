@@ -211,7 +211,7 @@ private:
   Transform                        m_TransformFromRequestSetTransformAndParent;
   Self::ConstPointer               m_ParentFromRequestSetTransformAndParent;
 
-  /** Processing for RequestSetTransformAndParent called with a NULL parent. */
+  /** Processing for RequestSetTransformAndParent called with a nullptr parent. */
   void SetTransformAndParentNullParentProcessing();
 
   /** Processing for RequestSetTransformAndParent called with this as parent. */
@@ -239,7 +239,7 @@ private:
    */
   void ComputeTransformToThisTargetProcessing();
 
-  /** Processing for RequestComputeTransformTo called with NULL as 
+  /** Processing for RequestComputeTransformTo called with nullptr as 
    *  the target coordinate system.
    */
   void ComputeTransformToNullTargetProcessing();
@@ -316,7 +316,7 @@ igstkEventMacro( CoordinateSystemErrorEvent, IGSTKErrorEvent );
 igstkEventMacro( CoordinateSystemSetParentError, CoordinateSystemErrorEvent );
 
 /** This event should be invoked when RequestSetTransformAndParent is called 
- *  with a NULL parent.
+ *  with a nullptr parent.
  */
 igstkEventMacro( CoordinateSystemNullParentEvent, 
                  CoordinateSystemSetParentError );

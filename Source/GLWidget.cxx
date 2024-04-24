@@ -77,7 +77,7 @@ namespace igstk
 	{
 		igstkLogMacro(DEBUG, "igstkGLWidget::RequestSetView called ...\n");
 
-		if (view == NULL)
+		if (view == nullptr)
 		{
 			igstkPushInputMacro(InValidView);
 		}

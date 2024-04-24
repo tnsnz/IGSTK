@@ -27,7 +27,7 @@ namespace igstk
 
 SocketCommunicationForWindows::SocketCommunicationForWindows() : m_StateMachine(this)
 {
-    m_pGetInternalRead = NULL;
+    m_pGetInternalRead = nullptr;
 }
 
 SocketCommunicationForWindows::~SocketCommunicationForWindows()
@@ -163,7 +163,7 @@ bool SocketCommunicationForWindows::connect(std::string serialNumber, std::strin
     addressInfo.ai_socktype = SOCK_STREAM;
     addressInfo.ai_protocol = IPPROTO_TCP;
     // Setup a TCP socket using the given hostname and port
-    addrinfo* aiPointer = NULL, * pai;
+    addrinfo* aiPointer = nullptr, * pai;
 	int addrinforesult = getaddrinfo(serialNumber.c_str(), portNumber.c_str(), &addressInfo, &aiPointer);
     if (addrinforesult != 0)
     {
@@ -171,7 +171,7 @@ bool SocketCommunicationForWindows::connect(std::string serialNumber, std::strin
         return false;
     }
 
-    for (pai = aiPointer; pai != NULL; pai = pai->ai_next)
+    for (pai = aiPointer; pai != nullptr; pai = pai->ai_next)
     {
         //Initialize socket
         m_Socket = socket(pai->ai_family, pai->ai_socktype, pai->ai_protocol);

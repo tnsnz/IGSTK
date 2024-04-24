@@ -73,7 +73,7 @@ PolarisTracker::ResultType PolarisTracker
   PolarisTrackerToolType * polarisTrackerTool = 
              dynamic_cast< PolarisTrackerToolType * >( trackerToolNonConst );   
 
-  if ( polarisTrackerTool == NULL )
+  if ( polarisTrackerTool == nullptr )
     {
     igstkLogMacro ( DEBUG, "Tracker tool probably not polaris type " );
     return FAILURE;

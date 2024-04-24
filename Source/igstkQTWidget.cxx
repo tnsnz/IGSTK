@@ -56,11 +56,11 @@ QVTKWidget( qparent, name, f ), m_StateMachine(this), m_ProxyView(this)
 QVTKWidget( qparent, f ), m_StateMachine(this), m_ProxyView(this)
 #endif
 { 
-  this->m_Logger = NULL;
+  this->m_Logger = nullptr;
   this->m_View = ViewType::New();
 
-  this->m_Renderer = NULL;
-  this->m_RenderWindowInteractor = NULL;
+  this->m_Renderer = nullptr;
+  this->m_RenderWindowInteractor = nullptr;
 
   igstkAddInputMacro( ValidView );
   igstkAddInputMacro( InValidView );
@@ -121,7 +121,7 @@ void QTWidget::RequestSetView( const ViewType* view)
 {
   igstkLogMacro( DEBUG, "igstkQTWidget::RequestSetView called ...\n");
 
-  if ( view == NULL )
+  if ( view == nullptr )
     {
     igstkPushInputMacro( InValidView );
     }
@@ -183,7 +183,7 @@ void QTWidget::DisableInteractionsProcessing()
 void QTWidget::mousePressEvent(QMouseEvent* e)
 {
 
-  vtkRenderWindowInteractor* interactor = NULL;
+  vtkRenderWindowInteractor* interactor = nullptr;
   if(this->mRenWin)
     {
     interactor = this->mRenWin->GetInteractor();
@@ -236,7 +236,7 @@ void
 QTWidget
 ::mouseReleaseEvent(QMouseEvent* e)
 {
-  vtkRenderWindowInteractor* interactor = NULL;
+  vtkRenderWindowInteractor* interactor = nullptr;
   if(this->mRenWin)
     {
     interactor = this->mRenWin->GetInteractor();
@@ -306,7 +306,7 @@ QTWidget
  */
 void QTWidget::mouseMoveEvent(QMouseEvent *e)
 {
-  vtkRenderWindowInteractor* interactor = NULL;
+  vtkRenderWindowInteractor* interactor = nullptr;
   if(this->mRenWin)
     {
     interactor = this->mRenWin->GetInteractor();
@@ -348,7 +348,7 @@ void QTWidget::mouseMoveEvent(QMouseEvent *e)
 #ifndef QT_NO_WHEELEVENT
 void QTWidget::wheelEvent(QWheelEvent* e)
 {
-  vtkRenderWindowInteractor* interactor = NULL;
+  vtkRenderWindowInteractor* interactor = nullptr;
   if(this->mRenWin)
     {
     interactor = this->mRenWin->GetInteractor();

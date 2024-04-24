@@ -839,7 +839,7 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
         m_SocketComm->ClearBuffers();
     }
 
-    /* if the command is NULL, send a break to reset the device */
+    /* if the command is nullptr, send a break to reset the device */
     if (command == 0) {
         /* serial break will force tracking to stop */
         m_Tracking = 0;
@@ -880,7 +880,7 @@ const char* NDICommandInterpreter::InternalCommand(const char* command)
         }
     }
 
-    /* if the command was NULL, check reset reply */
+    /* if the command was nullptr, check reset reply */
     if (m_ErrorCode == 0) {
         if (command == 0) {
             if (strncmp(crp, "RESET", 5) != 0) {
@@ -1690,7 +1690,7 @@ int NDICommandInterpreter::GetIRCHKSourceXY(int side, int i,
 
   dp = m_IRCHKSources;
 
-  if (dp != NULL && *dp != '\0')
+  if (dp != nullptr && *dp != '\0')
     {
     n = this->SignedStringToInt(dp, 3);
     if (n >= 0 && n <= 20)

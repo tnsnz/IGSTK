@@ -42,7 +42,7 @@ Fl_Gl_Window( xPos, yPos, width, height, l ), m_StateMachine(this), m_ProxyView(
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::Constructor() called ...\n");
 
-  this->m_Logger = NULL;
+  this->m_Logger = nullptr;
 
   this->end();
 
@@ -52,8 +52,8 @@ Fl_Gl_Window( xPos, yPos, width, height, l ), m_StateMachine(this), m_ProxyView(
 
   this->m_RenderWindowIDSet = false;
 
-  this->m_Renderer = NULL;
-  this->m_RenderWindowInteractor = NULL;
+  this->m_Renderer = nullptr;
+  this->m_RenderWindowInteractor = nullptr;
 
   // instantiate the view object
   this->m_View = ViewType::New();
@@ -95,14 +95,14 @@ FLTKWidget::~FLTKWidget()
     this->m_View->RequestStop();
 
 
-    if ( this->m_Renderer != NULL )
+    if ( this->m_Renderer != nullptr )
       {
       vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
 
-      if ( renderWindow != NULL )
+      if ( renderWindow != nullptr )
         {
         #if defined(WIN32) || defined(_WIN32)
-          renderWindow->SetWindowId( NULL );
+          renderWindow->SetWindowId( nullptr );
         #endif
         }
       }
@@ -141,7 +141,7 @@ void FLTKWidget::RequestSetView( const ViewType* view )
 {
   igstkLogMacro( DEBUG, "igstkFLTKWidget::RequestSetView called ...\n");
 
-  if ( view == NULL )
+  if ( view == nullptr )
     {
     igstkPushInputMacro( InValidView );
     }
@@ -166,14 +166,14 @@ void FLTKWidget::ConnectViewProcessing( )
 void FLTKWidget::SetRenderWindowID(void)
 {
 
-  if ( this->m_Renderer == NULL )
+  if ( this->m_Renderer == nullptr )
     {
     return;
     }
 
   vtkRenderWindow * renderWindow = this->m_Renderer->GetRenderWindow();
 
-  if ( renderWindow == NULL )
+  if ( renderWindow == nullptr )
     {
     return;
     }
@@ -263,7 +263,7 @@ void FLTKWidget::draw(void)
 
   vtkRenderWindowInteractor * interactor = this->m_RenderWindowInteractor;
 
-  if ( interactor != NULL )
+  if ( interactor != nullptr )
     {
     interactor->Render();
     }
@@ -300,7 +300,7 @@ int FLTKWidget::handle( int event )
   vtkRenderWindowInteractor * renderWindowInteractor =
     this->m_RenderWindowInteractor;
 
-  if ( renderWindowInteractor == NULL )
+  if ( renderWindowInteractor == nullptr )
     {
     return 0;
     }
@@ -314,7 +314,7 @@ int FLTKWidget::handle( int event )
                             Fl::event_x(), this->h()-Fl::event_y()-1,
                             Fl::event_state( FL_CTRL ),
                             Fl::event_state( FL_SHIFT ),
-                            Fl::event_key(), 1, NULL);
+                            Fl::event_key(), 1, nullptr);
 
   switch( event )
     {
@@ -324,11 +324,11 @@ int FLTKWidget::handle( int event )
       break;
 
     case FL_KEYBOARD:   // keypress
-      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
+      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, nullptr);
 
       // Disabling VTK keyboard interaction
-      //this->InvokeEvent(vtkCommand::KeyPressEvent, NULL);
-      //this->InvokeEvent(vtkCommand::CharEvent, NULL);
+      //this->InvokeEvent(vtkCommand::KeyPressEvent, nullptr);
+      //this->InvokeEvent(vtkCommand::CharEvent, nullptr);
 
       // now for possible controversy: there
       // is no way to find out if the
@@ -351,15 +351,15 @@ int FLTKWidget::handle( int event )
         {
         case FL_LEFT_MOUSE:
           renderWindowInteractor->InvokeEvent(
-                                      vtkCommand::LeftButtonPressEvent,NULL);
+                                      vtkCommand::LeftButtonPressEvent,nullptr);
           break;
         case FL_MIDDLE_MOUSE:
           renderWindowInteractor->InvokeEvent(
-                                    vtkCommand::MiddleButtonPressEvent,NULL);
+                                    vtkCommand::MiddleButtonPressEvent,nullptr);
           break;
         case FL_RIGHT_MOUSE:
           renderWindowInteractor->InvokeEvent(
-                                     vtkCommand::RightButtonPressEvent,NULL);
+                                     vtkCommand::RightButtonPressEvent,nullptr);
           break;
         }
       break; // this break should be here, at least according to
@@ -370,7 +370,7 @@ int FLTKWidget::handle( int event )
       // (this bug took a while to find :)
     case FL_DRAG:
     case FL_MOVE:
-      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, NULL);
+      renderWindowInteractor->InvokeEvent(vtkCommand::MouseMoveEvent, nullptr);
     break;
 
     case FL_RELEASE:    // mouse up
@@ -379,18 +379,18 @@ int FLTKWidget::handle( int event )
         case FL_LEFT_MOUSE:
           {
           renderWindowInteractor->InvokeEvent(
-                                     vtkCommand::LeftButtonReleaseEvent,NULL);
+                                     vtkCommand::LeftButtonReleaseEvent,nullptr);
           this->m_ProxyView.SetPickedPointCoordinates( this->m_View,
                  Fl::event_x(),this->h()-Fl::event_y()-1 );
           }
           break;
         case FL_MIDDLE_MOUSE:
           renderWindowInteractor->InvokeEvent(
-                                   vtkCommand::MiddleButtonReleaseEvent,NULL);
+                                   vtkCommand::MiddleButtonReleaseEvent,nullptr);
           break;
         case FL_RIGHT_MOUSE:
           renderWindowInteractor->InvokeEvent(
-                                    vtkCommand::RightButtonReleaseEvent,NULL);
+                                    vtkCommand::RightButtonReleaseEvent,nullptr);
           break;
         }
       break;

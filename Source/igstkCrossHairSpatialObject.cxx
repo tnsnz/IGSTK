@@ -25,7 +25,7 @@ CrossHairSpatialObject::CrossHairSpatialObject():m_StateMachine(this)
   m_CrossHairSpatialObject = CrossHairSpatialObjectType::New();
   this->RequestSetInternalSpatialObject( m_CrossHairSpatialObject );  
 
-  m_ToolSpatialObject = NULL; 
+  m_ToolSpatialObject = nullptr; 
 
   //tool spatial object check flag
   m_ToolSpatialObjectSet = false;

@@ -37,7 +37,7 @@ UltrasoundProbeObjectRepresentation
 ::UltrasoundProbeObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_UltrasoundProbeSpatialObject = NULL;
+  m_UltrasoundProbeSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_UltrasoundProbeSpatialObject );
   
   igstkAddInputMacro( ValidUltrasoundProbeObject );

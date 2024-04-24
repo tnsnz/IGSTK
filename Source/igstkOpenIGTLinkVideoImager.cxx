@@ -119,14 +119,14 @@ OpenIGTLinkVideoImager::InternalStartImaging( void )
 
   if ( m_Communication.IsNull() )
   {
-    std::cout << " m_Communication is NULL. cannot start " << std::endl;
+    std::cout << " m_Communication is nullptr. cannot start " << std::endl;
     return FAILURE;
   }
 
   m_Communication->Print(std::cout);
 
   // Waiting for Connection
-  m_Socket = NULL;
+  m_Socket = nullptr;
 
   unsigned int times = 0;
   unsigned int maxTimes = 20;
@@ -369,7 +369,7 @@ AddVideoImagerToolToInternalDataContainers(
   igstkLogMacro( DEBUG, "igstk::OpenIGTLinkVideoImager::"
              << "RemoveVideoImagerToolFromInternalDataContainers called ...\n");
 
-  if ( imagerTool == NULL )
+  if ( imagerTool == nullptr )
     {
     return FAILURE;
     }

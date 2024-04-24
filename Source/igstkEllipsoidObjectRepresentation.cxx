@@ -29,7 +29,7 @@ EllipsoidObjectRepresentation::EllipsoidObjectRepresentation()
                                                         :m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_EllipsoidObject = NULL;
+  m_EllipsoidObject = nullptr;
   this->RequestSetSpatialObject( m_EllipsoidObject );
   m_EllipsoidSource = vtkSuperquadricSource::New();
   
@@ -60,7 +60,7 @@ EllipsoidObjectRepresentation::~EllipsoidObjectRepresentation()
   if( m_EllipsoidSource )
     {
     m_EllipsoidSource->Delete();
-    m_EllipsoidSource = NULL;
+    m_EllipsoidSource = nullptr;
     }
   this->DeleteActors();
 }
@@ -105,7 +105,7 @@ void EllipsoidObjectRepresentation::SetEllipsoidObjectProcessing()
   m_EllipsoidObject = m_EllipsoidObjectToAdd;
   this->RequestSetSpatialObject( m_EllipsoidObject );
 
-  if( m_EllipsoidSource != NULL )
+  if( m_EllipsoidSource != nullptr )
     {
     m_EllipsoidSource->SetCenter(0, 0, 0);
 

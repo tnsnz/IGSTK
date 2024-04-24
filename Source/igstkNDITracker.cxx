@@ -458,6 +458,8 @@ NDITracker::ResultType NDITracker::InternalThreadedUpdateStatus( void )
   // unlock the buffer
   //m_BufferLock->Unlock();
 
+  igstk::PulseGenerator::Sleep(1);
+
   return result;
 }
 
@@ -468,7 +470,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
   igstkLogMacro( DEBUG, 
     "igstk::NDITracker::AddTrackerToolToInternalDataContainers called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     } 
@@ -497,7 +499,7 @@ RemoveTrackerToolFromInternalDataContainers
     "igstk::NDITracker::RemoveTrackerToolFromInternalDataContainers "
     "called ...\n");
  
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     } 

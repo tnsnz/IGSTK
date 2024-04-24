@@ -38,7 +38,7 @@ namespace igstk
 TubeObjectRepresentation::TubeObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_TubeSpatialObject = NULL;
+  m_TubeSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_TubeSpatialObject );
   
   igstkAddInputMacro( ValidTubeObject );

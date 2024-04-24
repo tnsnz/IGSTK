@@ -144,7 +144,7 @@ Axios3DTracker::ResultType Axios3DTracker::Lock()
 
   std::stringstream str;
 
-  if (m_Metrology == NULL)
+  if (m_Metrology == nullptr)
   {
     igstkLogMacro( CRITICAL, "Metrology is not defined" );
     return FAILURE;
@@ -308,7 +308,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasurePoints(bool extended_protocol)
   // without lock it's not possible to measure points and locators
   s << Lock();
 
-  if (m_Metrology == NULL)
+  if (m_Metrology == nullptr)
   {
     igstkLogMacro( CRITICAL, "Metrology is not defined" )
     return FAILURE;
@@ -456,7 +456,7 @@ Axios3DTracker::ResultType Axios3DTracker::MeasureLocator
   // without lock it's not possible to measure points and locators
   s << Lock();
 
-  if (m_Metrology == NULL)
+  if (m_Metrology == nullptr)
   {
     igstkLogMacro(CRITICAL, "Metrology not defined")
     return FAILURE;
@@ -917,7 +917,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalClose( void )
 
   try
   {
-    if(m_Metrology == NULL)
+    if(m_Metrology == nullptr)
     {
       igstkLogMacro(CRITICAL, "Metrology is not defined")
       return FAILURE;
@@ -950,7 +950,7 @@ Axios3DTracker::ResultType Axios3DTracker::InternalReset( void )
 {
   igstkLogMacro(DEBUG, "igstk::Axios3DTracker::InternalReset called ...\n")
 
-  if (m_Metrology == NULL)
+  if (m_Metrology == nullptr)
   {
     igstkLogMacro(CRITICAL, "Metrology is not defined")
     return FAILURE;
@@ -1111,7 +1111,7 @@ Axios3DTracker::VerifyTrackerToolInformation (
   igstkLogMacro(DEBUG,
     "igstk::Axios3DTracker::VerifyTrackerToolInformation called ...\n")
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
   {
     igstkLogMacro(CRITICAL, "TrackerTool is not defined")
     return FAILURE;

@@ -74,8 +74,8 @@ void
 CoordinateSystemTransformToErrorResult
 ::Clear()
 {
-  m_Source = NULL;
-  m_Destination = NULL;
+  m_Source = nullptr;
+  m_Destination = nullptr;
 }
 
 } // end namespace igstk

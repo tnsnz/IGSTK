@@ -29,7 +29,7 @@ namespace igstk
 AxesObjectRepresentation::AxesObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_AxesSpatialObject = NULL;
+  m_AxesSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_AxesSpatialObject );
   
   igstkAddInputMacro( ValidAxesObject );

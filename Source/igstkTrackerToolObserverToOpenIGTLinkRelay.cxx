@@ -47,11 +47,11 @@ TrackerToolObserverToOpenIGTLinkRelay():m_StateMachine(this)
 
 TrackerToolObserverToOpenIGTLinkRelay::~TrackerToolObserverToOpenIGTLinkRelay()
 {
-  this->m_Observer = NULL; // FIXME also disconnect as an observer
+  this->m_Observer = nullptr; // FIXME also disconnect as an observer
 
   this->m_Matrix->Delete();
 
-  this->m_Matrix = NULL;
+  this->m_Matrix = nullptr;
 
   this->m_Socket->CloseSocket();
 }

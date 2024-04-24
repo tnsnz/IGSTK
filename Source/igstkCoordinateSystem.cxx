@@ -31,8 +31,8 @@ CoordinateSystem
   // Using a self loop for FindLowestCommonAncestor 
   // will prevent the destructor from being called if
   // m_Parent is never set. Instead, we set the 
-  // parent to be NULL.
-  this->m_Parent = NULL; 
+  // parent to be nullptr.
+  this->m_Parent = nullptr; 
 
   // Default transform is identity.
   this->m_TransformToParent.SetToIdentity( 
@@ -253,10 +253,10 @@ CoordinateSystem
 ::~CoordinateSystem()  
 {
   // Break references
-  m_Parent = NULL;
-  m_ParentFromRequestSetTransformAndParent = NULL;
-  m_TargetFromRequestComputeTransformTo = NULL;
-  m_LowestCommonAncestor = NULL;
+  m_Parent = nullptr;
+  m_ParentFromRequestSetTransformAndParent = nullptr;
+  m_TargetFromRequestComputeTransformTo = nullptr;
+  m_LowestCommonAncestor = nullptr;
 }
 
 
@@ -282,7 +282,7 @@ void CoordinateSystem::PrintSelf(
     }
   else
     {
-    os << " NULL " << std::endl;
+    os << " nullptr " << std::endl;
     }
 
   os << indent << "Target from RequestComputeTransformTo (temporary) = ";
@@ -293,7 +293,7 @@ void CoordinateSystem::PrintSelf(
     }
   else
     {
-    os << " NULL" << std::endl;
+    os << " nullptr" << std::endl;
     }
 
   os << indent << "Lowest common ancestor (temporary) = ";
@@ -304,7 +304,7 @@ void CoordinateSystem::PrintSelf(
     }
   else
     {
-    os << " NULL" << std::endl;
+    os << " nullptr" << std::endl;
     }
 
   os << indent << "COORDINATE SYSTEM PARENT = ";
@@ -316,7 +316,7 @@ void CoordinateSystem::PrintSelf(
     }
   else
     {
-    os << "NULL" << std::endl;
+    os << "nullptr" << std::endl;
     }
 
 }
@@ -324,7 +324,7 @@ void CoordinateSystem::PrintSelf(
 void CoordinateSystem
 ::RequestComputeTransformTo(const CoordinateSystem* target)
 {
-  if (NULL == target)
+  if (nullptr == target)
     {
     igstkPushInputMacro( NullCoordinateSystem );
     m_StateMachine.ProcessInputs();
@@ -343,7 +343,7 @@ void CoordinateSystem
   m_StateMachine.ProcessInputs();
 
   // Break the reference once we're done with it...
-  this->m_TargetFromRequestComputeTransformTo = NULL;
+  this->m_TargetFromRequestComputeTransformTo = nullptr;
 
   return;
 }
@@ -351,7 +351,7 @@ void CoordinateSystem
 void CoordinateSystem
 ::ComputeTransformToNullTargetProcessing()
 {
-  // ERROR - Can't compute transform to a NULL target.
+  // ERROR - Can't compute transform to a nullptr target.
   CoordinateSystemTransformToErrorResult payload;
   payload.Initialize( this, m_TargetFromRequestComputeTransformTo );
 
@@ -470,7 +470,7 @@ void CoordinateSystem
 ::RequestSetTransformAndParent(const Transform & transform, 
                                const CoordinateSystem* parent)
 {
-  if (NULL == parent)
+  if (nullptr == parent)
     {
     igstkPushInputMacro( NullParent );
     m_StateMachine.ProcessInputs();
@@ -499,7 +499,7 @@ void CoordinateSystem
     m_StateMachine.ProcessInputs();
 
     // Break reference when we're done with it...
-    this->m_ParentFromRequestSetTransformAndParent = NULL;
+    this->m_ParentFromRequestSetTransformAndParent = nullptr;
     return;
     }
   else
@@ -512,7 +512,7 @@ void CoordinateSystem
     m_StateMachine.ProcessInputs();
 
     // Break reference when we're done with it...
-    this->m_ParentFromRequestSetTransformAndParent = NULL;
+    this->m_ParentFromRequestSetTransformAndParent = nullptr;
     return;
     }
 }
@@ -555,7 +555,7 @@ void CoordinateSystem
 void CoordinateSystem
 ::SetTransformAndParentNullParentProcessing()
 {
-  // ERROR - Can't set parent to NULL.
+  // ERROR - Can't set parent to nullptr.
   CoordinateSystemNullParentEvent event;
   this->InvokeEvent( event );
 }
@@ -593,13 +593,13 @@ CoordinateSystem
     igstkPushInputMacro( AncestorFound );
     m_StateMachine.ProcessInputs();
     // Break reference when we're done with it.
-    this->m_LowestCommonAncestor = NULL;
+    this->m_LowestCommonAncestor = nullptr;
     return;
     }
 
-  if( NULL == bSmart )
+  if( nullptr == bSmart )
     {
-    // Error - target for FindLowestCommonAncestor is NULL.
+    // Error - target for FindLowestCommonAncestor is nullptr.
     // Push the Disconnected input. We should be in an 
     // attempting state (AttemptingComputeTransformToInInitialized or 
     // AttemptingComputeTransformTo) as a result of RequestComputeTransformTo
@@ -613,11 +613,11 @@ CoordinateSystem
   CoordinateSystemConstPointer bTemp;
 
   for(bTemp = bSmart;
-      bTemp != NULL;
+      bTemp != nullptr;
       bTemp = bTemp->m_Parent)
     {
     for(aTemp = aSmart; 
-        aTemp != NULL;
+        aTemp != nullptr;
         aTemp = aTemp->m_Parent)
       {
       if (aTemp == bTemp)
@@ -631,7 +631,7 @@ CoordinateSystem
         igstkPushInputMacro( AncestorFound );
         m_StateMachine.ProcessInputs();
         // Break reference when we're done with it.
-        this->m_LowestCommonAncestor = NULL;
+        this->m_LowestCommonAncestor = nullptr;
         return;
         }
       }
@@ -665,7 +665,7 @@ CoordinateSystem
     }
   // If we're not "target", can our parent
   //  reach "target"? Note, if parent was 
-  //  NULL, we'd be executing the branch 
+  //  nullptr, we'd be executing the branch 
   //  above. 
   // 
   else
@@ -741,8 +741,8 @@ CoordinateSystem
   CoordinateSystemSetTransformEvent event;
   event.Set( payload );
   
-  // We set the parent to be NULL.
-  this->m_Parent = NULL; 
+  // We set the parent to be nullptr.
+  this->m_Parent = nullptr; 
 
   // Default transform is identity.
   this->m_TransformToParent.SetToIdentity( 

@@ -30,7 +30,7 @@ CylinderObjectRepresentation::CylinderObjectRepresentation()
                                                   : m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_CylinderSpatialObject = NULL;
+  m_CylinderSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
   m_CylinderSource = vtkCylinderSource::New();
   
@@ -60,7 +60,7 @@ CylinderObjectRepresentation::~CylinderObjectRepresentation()
   if( m_CylinderSource )
     {
     m_CylinderSource->Delete();
-    m_CylinderSource = NULL;
+    m_CylinderSource = nullptr;
     }
   this->DeleteActors();
 }
@@ -94,7 +94,7 @@ void CylinderObjectRepresentation::SetCylinderObjectProcessing()
   m_CylinderSpatialObject = m_CylinderObjectToAdd;
   this->RequestSetSpatialObject( m_CylinderSpatialObject );
 
-  if( m_CylinderSource != NULL )
+  if( m_CylinderSource != nullptr )
     {
     m_CylinderSource->SetCenter(0, 0, 0);
     m_CylinderSource->SetRadius(m_CylinderSpatialObject->GetRadius());

@@ -114,7 +114,7 @@ void FLTKTextBufferLogOutput
     }
   else
     {
-    os << indent << "Stream is NULL" << std::endl;
+    os << indent << "Stream is nullptr" << std::endl;
     }
 }
 

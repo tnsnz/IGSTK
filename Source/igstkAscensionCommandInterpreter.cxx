@@ -1182,7 +1182,7 @@ void AscensionCommandInterpreter::SendCommandWords(
  *  with the command.
  *
  *  \param command    a constant that specifies what command to send
- *  \param data       the data to send with the command, or NULL if there
+ *  \param data       the data to send with the command, or nullptr if there
  *                   is no data associated with the command
  * This function can be used to send any command to the flock. */
 void AscensionCommandInterpreter::SendCommandBytes(

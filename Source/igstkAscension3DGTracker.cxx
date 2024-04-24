@@ -621,7 +621,7 @@ AddTrackerToolToInternalDataContainers( const TrackerToolType * trackerTool )
       "igstk::Ascension3DGTracker::AddTrackerToolToInternalDataContainers "
       "called ...\n");
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     return FAILURE;
     }

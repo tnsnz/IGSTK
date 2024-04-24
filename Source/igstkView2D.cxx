@@ -35,7 +35,7 @@ View2D::View2D() : m_StateMachine(this)
 /** Destructor */
 View2D::~View2D()
 {
-  this->SetInteractorStyle( NULL );
+  this->SetInteractorStyle( nullptr );
 }
 
 /** Print object information */

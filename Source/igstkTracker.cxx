@@ -333,7 +333,7 @@ void Tracker::RequestSetReferenceTool( TrackerToolType * trackerTool )
   identityTransform.SetToIdentity( 
                     igstk::TimeStamp::GetZeroValue() );
   
-  if( trackerTool != NULL )
+  if( trackerTool != nullptr )
     {
     // check if it is already attached to the tracker
     typedef TrackerToolsContainerType::iterator InputIterator;
@@ -1054,12 +1054,12 @@ itk::ITK_THREAD_RETURN_TYPE Tracker::GPIOStatusThreadFunction(void* pInfoStruct)
 	struct itk::PlatformMultiThreader::WorkUnitInfo* pInfo =
 		(struct itk::PlatformMultiThreader::WorkUnitInfo*)pInfoStruct;
 
-	if (pInfo == NULL)
+	if (pInfo == nullptr)
 	{
 		return ITK_THREAD_RETURN_DEFAULT_VALUE;
 	}
 
-	if (pInfo->UserData == NULL)
+	if (pInfo->UserData == nullptr)
 	{
 		return ITK_THREAD_RETURN_DEFAULT_VALUE;
 	}
@@ -1102,12 +1102,12 @@ itk::ITK_THREAD_RETURN_TYPE Tracker::TrackingThreadFunction(void* pInfoStruct)
   struct itk::PlatformMultiThreader::WorkUnitInfo * pInfo = 
     (struct itk::PlatformMultiThreader::WorkUnitInfo *)pInfoStruct;
 
-  if( pInfo == NULL )
+  if( pInfo == nullptr )
     {
     return ITK_THREAD_RETURN_DEFAULT_VALUE;
     }
 
-  if( pInfo->UserData == NULL )
+  if( pInfo->UserData == nullptr )
     {
     return ITK_THREAD_RETURN_DEFAULT_VALUE;
     }

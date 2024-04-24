@@ -74,7 +74,7 @@ namespace igstk
 	private:
 
 		/** Internal itkSpatialObject */
-		CylinderPointerType m_CylinderSpatialObject;
+		CylinderPointerType m_CylinderSpatialObject = nullptr;
 
 	};
 

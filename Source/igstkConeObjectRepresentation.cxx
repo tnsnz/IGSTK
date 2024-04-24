@@ -30,7 +30,7 @@ ConeObjectRepresentation::ConeObjectRepresentation():m_StateMachine(this)
   igstkLogMacro( DEBUG,  "Constructor called ....\n" );
 
   // We create the ellipse spatial object
-  m_ConeSpatialObject = NULL;
+  m_ConeSpatialObject = nullptr;
   this->RequestSetSpatialObject( m_ConeSpatialObject );
   m_ConeSource = vtkConeSource::New();
   
@@ -62,7 +62,7 @@ ConeObjectRepresentation::~ConeObjectRepresentation()
   if( m_ConeSource )
     {
     m_ConeSource->Delete();
-    m_ConeSource = NULL;
+    m_ConeSource = nullptr;
     }
   this->DeleteActors();
 }
@@ -102,7 +102,7 @@ void ConeObjectRepresentation::SetConeObjectProcessing()
   m_ConeSpatialObject = m_ConeObjectToAdd;
   this->RequestSetSpatialObject( m_ConeSpatialObject );
 
-  if( m_ConeSource != NULL )
+  if( m_ConeSource != nullptr )
     {
     m_ConeSource->SetCenter(0, 0, 0);
     m_ConeSource->SetRadius(m_ConeSpatialObject->GetRadius());

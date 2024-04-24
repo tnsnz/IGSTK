@@ -45,10 +45,10 @@ void deviceEnumerator (uint64 u64DeviceSerialNumber, void* pUserData)
 /** Constructor */
 InfiniTrackTracker::InfiniTrackTracker (void) :
 m_StateMachine(this)
-, m_Handle (NULL)
+, m_Handle (nullptr)
 , m_u64DeviceSerialNumber (0)
-, m_BufferLock (NULL)
-, m_pvecMarkerPos (NULL)
+, m_BufferLock (nullptr)
+, m_pvecMarkerPos (nullptr)
 , m_iProcessed (-1)
 , m_iAvailable (-1)
 , m_iInAcquisition (-1)
@@ -129,7 +129,7 @@ InfiniTrackTracker::ResultType InfiniTrackTracker::InternalClose( void )
   if (this->m_Handle)
     {
     itkCloseDriver ((itkHandle)this->m_Handle);
-    m_Handle = NULL;
+    m_Handle = nullptr;
     }
 
   return SUCCESS;
@@ -379,7 +379,7 @@ InfiniTrackTracker::VerifyTrackerToolInformation (
   igstkLogMacro(DEBUG, 
      "igstk::InfiniTrackTracker::VerifyTrackerToolInformation called ...\n")
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
     {
     igstkLogMacro(CRITICAL, "TrackerTool is not defined")
     return FAILURE;

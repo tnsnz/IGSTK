@@ -26,7 +26,7 @@ SpatialObject::SpatialObject():m_StateMachine(this)
   /** Coordinate system interface */
   igstkCoordinateSystemClassInterfaceConstructorMacro();
 
-  this->m_SpatialObject = NULL;
+  this->m_SpatialObject = nullptr;
 
   igstkAddInputMacro( InternalSpatialObjectNull );
   igstkAddInputMacro( InternalSpatialObjectValid );
@@ -148,7 +148,7 @@ SpatialObject
 ::ReportSpatialObjectNullProcessing()
 {
   igstkLogMacro( WARNING, 
-    "Spatial object was NULL when trying to SetInternalSpatialObject." );
+    "Spatial object was nullptr when trying to SetInternalSpatialObject." );
   this->InvokeEvent( InvalidRequestErrorEvent() );
 }
 

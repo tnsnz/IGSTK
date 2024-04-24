@@ -51,7 +51,7 @@ m_StateMachine(this)
 
   igstkLogMacro( DEBUG, "igstkView::Constructor() called ...\n");
   
-  this->m_Logger = NULL;
+  this->m_Logger = nullptr;
   
   // Create a default render window
   this->m_RenderWindow = vtkGenericOpenGLRenderWindow::New();
@@ -261,27 +261,27 @@ View::~View()
   
   m_PulseGenerator->RequestStop();
 
-  this->m_RenderWindowInteractor->SetRenderWindow( NULL ); 
-  this->m_RenderWindowInteractor->SetPicker( NULL );
+  this->m_RenderWindowInteractor->SetRenderWindow( nullptr ); 
+  this->m_RenderWindowInteractor->SetPicker( nullptr );
 
   this->m_RenderWindow->RemoveRenderer( this->m_Renderer );
 
-  if( this->m_RenderWindowInteractor != NULL )
+  if( this->m_RenderWindowInteractor != nullptr )
     {
     this->m_RenderWindowInteractor->Delete();
     }
 
-  if( this->m_Renderer != NULL )
+  if( this->m_Renderer != nullptr )
     {
     this->m_Renderer->Delete();
     }
 
-  if( this->m_RenderWindow != NULL )
+  if( this->m_RenderWindow != nullptr )
     {
     this->m_RenderWindow->Delete();
     }
 
-  if( this->m_PointPicker != NULL )
+  if( this->m_PointPicker != nullptr )
     {
     this->m_PointPicker->Delete();
     }
@@ -741,9 +741,9 @@ void View::AddObjectProcessing()
     actorIt++;
     } 
 
-  //after the object is added, set the temp smart point to NULL, so that
+  //after the object is added, set the temp smart point to nullptr, so that
   //the reference count of the object decrements
-  this->m_ObjectToBeAdded = NULL;
+  this->m_ObjectToBeAdded = nullptr;
 }
 
 void View::AddAnnotation2DProcessing( )
@@ -822,9 +822,9 @@ void View::RemoveObjectProcessing()
     actorIt++;
     } 
 
-  //after the object is removed, set the temp smart point to NULL, so that
+  //after the object is removed, set the temp smart point to nullptr, so that
   //the reference count of the object decrements
-  this->m_ObjectToBeRemoved = NULL;
+  this->m_ObjectToBeRemoved = nullptr;
 }
 
 
@@ -952,8 +952,8 @@ void View::SaveScreenShot()
   
   writer->Write();
 
-  writer->SetInputData( NULL );
-  windowToImageFilter->SetInput( NULL );
+  writer->SetInputData( nullptr );
+  windowToImageFilter->SetInput( nullptr );
 
   windowToImageFilter->Delete();
   writer->Delete();

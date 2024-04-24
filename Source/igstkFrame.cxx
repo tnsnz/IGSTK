@@ -61,7 +61,7 @@ Frame::SetFrameDimensions(unsigned int width,
   try
     {
     m_ImagePtr = new unsigned char[m_Width * m_Height * m_NumberOfChannels];
-    if (m_ImagePtr == NULL)
+    if (m_ImagePtr == nullptr)
       {
       igstkLogMacro( FATAL, "igstk::Frame::SetFrameDimensions: "
                       << "Memory could not be allocated (malloc failed)!\n" );

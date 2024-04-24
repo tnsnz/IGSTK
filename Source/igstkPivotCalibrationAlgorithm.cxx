@@ -423,7 +423,7 @@ PivotCalibrationAlgorithm::GetTransformProcessing()
   CoordinateSystemTransformToEvent event; 
   // FIXME: This event should also include the source and destination 
   // coordinate systems.
-  result.Initialize( this->m_Transform, NULL, NULL );
+  result.Initialize( this->m_Transform, nullptr, nullptr );
 
   event.Set( result );
   this->InvokeEvent( event );

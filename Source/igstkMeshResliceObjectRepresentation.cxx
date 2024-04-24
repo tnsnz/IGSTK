@@ -42,7 +42,7 @@ MeshResliceObjectRepresentation
 ::MeshResliceObjectRepresentation():m_StateMachine(this)
 {
   // We create the ellipse spatial object
-  m_MeshObject = NULL;
+  m_MeshObject = nullptr;
   
   this->RequestSetSpatialObject( m_MeshObject );
   

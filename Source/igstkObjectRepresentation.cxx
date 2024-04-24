@@ -50,7 +50,7 @@ ObjectRepresentation::ObjectRepresentation():
   this->m_Color[1] = 1.0;
   this->m_Color[2] = 1.0;
   this->m_Opacity = 1.0;
-  this->m_SpatialObject = NULL;
+  this->m_SpatialObject = nullptr;
 
   igstkAddInputMacro( ValidSpatialObject );
   igstkAddInputMacro( NullSpatialObject  );
@@ -175,7 +175,7 @@ ObjectRepresentation::ObjectRepresentation():
                             Invisible, SetActorVisibility,
                             Invisible, SetActorInvisible );
 
-  this->m_VisibilitySetActor = NULL;
+  this->m_VisibilitySetActor = nullptr;
 
   this->m_VisibilityStateMachine.SelectInitialState( this->m_InvisibleState );
   this->m_VisibilityStateMachine.SetReadyToRun();
@@ -280,7 +280,7 @@ void ObjectRepresentation::SetColor(
   while(it != this->m_Actors.end())
     {
     vtkActor * va = dynamic_cast< vtkActor * >( *it );
-    if( va != NULL )
+    if( va != nullptr )
       {
       va->GetProperty()->SetColor(
         this->m_Color[0], this->m_Color[1], this->m_Color[2] );
@@ -323,7 +323,7 @@ void ObjectRepresentation::RequestUpdateRepresentation(
   this->m_TargetCoordinateSystem = cs;
   igstkPushInputMacro( UpdateRepresentation );
   this->m_StateMachine.ProcessInputs();
-  this->m_TargetCoordinateSystem = NULL; // Break reference.
+  this->m_TargetCoordinateSystem = nullptr; // Break reference.
 }
 
 /** Process the request for updating the transform from the SpatialObject. */

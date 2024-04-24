@@ -39,8 +39,8 @@ ReslicerPlaneSpatialObject
   //Default orientation type
   m_OrientationType = Axial;
 
-  m_BoundingBoxProviderSpatialObject = NULL;
-  m_ToolSpatialObject = NULL; 
+  m_BoundingBoxProviderSpatialObject = nullptr;
+  m_ToolSpatialObject = nullptr; 
 
   //tool spatial object check flag
   m_ToolSpatialObjectSet  = false;

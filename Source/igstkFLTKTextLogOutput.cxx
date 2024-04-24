@@ -114,7 +114,7 @@ void FLTKTextLogOutput::PrintSelf( std::ostream& os, itk::Indent indent ) const
     }
   else
     {
-    os << indent << "Stream is NULL" << std::endl;
+    os << indent << "Stream is nullptr" << std::endl;
     }
 }
 

@@ -253,7 +253,7 @@ void TrackerTool::AttemptToAttachTrackerToolToTrackerProcessing( void )
   igstkLogMacro( DEBUG, 
     "igstk::TrackerTool::AttemptToAttachTrackerToolToTracker called ...\n");
 
-  if(this->m_TrackerToAttachTo == NULL)
+  if(this->m_TrackerToAttachTo == nullptr)
     {
       igstkPushInputMacro( AttachmentToTrackerFailure );
     }

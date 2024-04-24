@@ -33,10 +33,10 @@ ToolProjectionObjectRepresentation
 ::ToolProjectionObjectRepresentation():m_StateMachine(this)
 {
 
-  m_LineSource = NULL;
-  m_LineProperty = NULL;
+  m_LineSource = nullptr;
+  m_LineProperty = nullptr;
 
-  m_ToolProjectionSpatialObject = NULL;
+  m_ToolProjectionSpatialObject = nullptr;
 
   m_LineWidth = 2;
 
@@ -117,16 +117,16 @@ ToolProjectionObjectRepresentation
 {
   this->DeleteActors();
 
-  if (m_LineSource != NULL)
+  if (m_LineSource != nullptr)
     {
     m_LineSource->Delete();
-    m_LineSource=NULL;
+    m_LineSource=nullptr;
     }
 
-  if (m_LineProperty != NULL)
+  if (m_LineProperty != nullptr)
     {
     m_LineProperty->Delete();
-    m_LineProperty=NULL;
+    m_LineProperty=nullptr;
     }
 }
 
@@ -345,7 +345,7 @@ void ToolProjectionObjectRepresentation
     }
   this->m_LineWidth = width;
 
-  if ( m_LineProperty != NULL )
+  if ( m_LineProperty != nullptr )
     {
     m_LineProperty->SetLineWidth(m_LineWidth);
     }

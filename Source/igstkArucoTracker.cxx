@@ -353,7 +353,7 @@ ArucoTracker::VerifyTrackerToolInformation (
   igstkLogMacro( DEBUG,
   "igstk::ArucoTracker::VerifyTrackerToolInformation called ...\n" )
 
-  if ( trackerTool == NULL )
+  if ( trackerTool == nullptr )
   {
     igstkLogMacro( CRITICAL, "TrackerTool is not defined" )
     return FAILURE;
@@ -423,7 +423,7 @@ ArucoTracker::RemoveTrackerToolFromInternalDataContainers(
    "igstk::ArucoTracker::RemoveTrackerToolFromInternalDataContainers \
    called ...\n" )
 
-   if ( trackerTool == NULL )
+   if ( trackerTool == nullptr )
     {
       return FAILURE;
     }
@@ -445,7 +445,7 @@ ArucoTracker::AddTrackerToolToInternalDataContainers (
   "igstk::ArucoTracker::AddTrackerToolToInternalDataContainers \
    called ...\n" )
 
-   if ( trackerTool == NULL )
+   if ( trackerTool == nullptr )
     {
       return FAILURE;
     }
