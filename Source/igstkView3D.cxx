@@ -43,6 +43,16 @@ void View3D::PrintSelf( std::ostream& os, ::itk::Indent indent ) const
   this->Superclass::PrintSelf(os,indent);
 }
 
+CoordinateSystem::Pointer View3D::GetPickerCoordSystemPublic() const
+{
+	return this->GetPickerCoordSystem();
+}
+
+const CoordinateSystem* View3D::GetCoordinateSystemPublic() const
+{
+	return this->GetCoordinateSystem();
+}
+
 void View3D::SetPickedPointCoordinates(double x, double y)
 {
 	InitPickPointEvent initPickPointEvt;
