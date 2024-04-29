@@ -49,6 +49,9 @@ public:
   /** Print the object information in a stream. */
   void PrintSelf( std::ostream& os, ::itk::Indent indent ) const; 
 
+  CoordinateSystem::Pointer GetPickerCoordSystemPublic() const;
+  const CoordinateSystem* GetCoordinateSystemPublic() const;
+
 protected:
   /** Constructor */
   View3D( );
