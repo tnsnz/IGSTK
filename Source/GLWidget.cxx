@@ -17,6 +17,8 @@
 #include "igstkEvents.h"
 
 #include "GLWidget.h"
+#include <QBoxLayout>
+#include <QDebug>
 #include <QTimer>
 namespace igstk
 {
@@ -50,6 +52,11 @@ namespace igstk
 
 		igstkSetInitialStateMacro(Idle);
 		m_StateMachine.SetReadyToRun();
+
+		pinchGuideLabel = new QLabel(this);
+		pinchGuidePixmap = QPixmap(":/Resources/icons/pinchGuide.png");
+		pinchGuideLabel->setPixmap(pinchGuidePixmap);
+		pinchGuideLabel->hide();
 	}
 
 	GLWidget::~GLWidget()
@@ -150,13 +157,17 @@ namespace igstk
 		{
 		case Qt::LeftButton:
 			interactor->InvokeEvent(vtkCommand::LeftButtonPressEvent, e);
+			lastPressedEventId = vtkCommand::LeftButtonPressEvent;
 			break;
 
 		case Qt::MiddleButton:
 			interactor->InvokeEvent(vtkCommand::MiddleButtonPressEvent, e);
+			lastPressedEventId = vtkCommand::MiddleButtonPressEvent;
 			break;
 
 		case Qt::RightButton:
+			showPinchGuide(geometry());
+			lastPressedEventId = vtkCommand::RightButtonPressEvent;
 			interactor->InvokeEvent(vtkCommand::RightButtonPressEvent, e);
 			break;
 
@@ -214,6 +225,7 @@ namespace igstk
 
 		case Qt::RightButton:
 		{
+			pinchGuideLabel->hide();
 			interactor->InvokeEvent(vtkCommand::RightButtonReleaseEvent, e);
 
 			if (view->isPointRegMode())
@@ -244,6 +256,16 @@ namespace igstk
 		if (!interactor || !interactor->GetEnabled() || !this->interactionHandling)
 		{
 			return;
+		}
+
+		if (touching)
+		{
+			ignorePinchGuide = true;
+		}
+
+		if (lastPressedEventId != vtkCommand::RightButtonPressEvent)
+		{
+			pinchGuideLabel->hide();
 		}
 
 		interactor->SetEventInformationFlipY(e->x(), e->y(),
@@ -287,6 +309,11 @@ namespace igstk
 
 	void GLWidget::mouseDoubleClickEvent(QMouseEvent* e)
 	{
+		if (Qt::LeftButton != e->button())
+		{
+			return;
+		}
+
 		vtkRenderWindowInteractor* interactor = nullptr;
 		auto renWin = GetRenderWindow();
 		if (renWin)
@@ -345,6 +372,60 @@ namespace igstk
 		}
 
 		QVTKOpenGLNativeWidget::showEvent(evt);
+	}
+
+	void GLWidget::showPinchGuide(QRect geo)
+	{
+		auto innerLayout = layout();
+		if (innerLayout)
+		{
+			pinchGuideLabel->setGeometry(innerLayout->geometry());
+		}
+		else
+		{
+			// calc pixmap and label geometry to GLWidget size.
+		}
+
+		pinchGuideLabel->show();
+	}
+
+	bool GLWidget::event(QEvent* ev)
+	{
+		if (ev->type() == QEvent::TouchBegin)
+		{
+			touchBeginTimer.restart();
+			touching = true;
+			QTimer::singleShot(700, [&]() -> void
+				{
+					if (!touching || ignorePinchGuide)
+					{
+						return;
+					}
+
+					auto beginTime = touchBeginTimer.elapsed();
+					auto endTime = touchEndTimer.elapsed();
+
+					if (beginTime >= 690 && beginTime < endTime)
+					{
+						showPinchGuide(geometry());
+					}
+				});
+
+			return true;
+		}
+		else if (ev->type() == QEvent::TouchEnd)
+		{
+			touchEndTimer.restart();
+			ignorePinchGuide = false;
+			touching = false;
+			QTimer::singleShot(0, [&]() -> void
+				{
+					pinchGuideLabel->hide();
+				});
+			return true;
+		}
+
+		return Superclass::event(ev);
 	}
 
 	void GLWidget::ReportInvalidRequestProcessing()

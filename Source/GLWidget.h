@@ -11,6 +11,8 @@
 #include "igstkViewProxy.h"
 
 #include "QVTKOpenGLNativeWidget.h"
+#include <QLabel>
+#include <QElapsedTimer>
 #include <QPoint>
 
 namespace igstk {
@@ -49,8 +51,18 @@ namespace igstk {
 		void mousePressEvent(QMouseEvent* e);
 		void wheelEvent(QWheelEvent* e);
 		void showEvent(QShowEvent*);
+		bool event(QEvent*) override;
 
+		vtkCommand::EventIds lastPressedEventId;
 		bool doubleClicked = false;
+		bool touching = false;
+		bool ignorePinchGuide = false;
+		QElapsedTimer touchBeginTimer;
+		QElapsedTimer touchEndTimer;
+
+		void showPinchGuide(QRect);
+		QLabel* pinchGuideLabel = nullptr;
+		QPixmap pinchGuidePixmap;
 
 	private:
 		void ReportInvalidRequestProcessing();
