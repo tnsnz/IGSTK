@@ -46,6 +46,7 @@ RenderWindowInteractor
 {
   this->Initialized = 1;
   this->Enable();
+  vtkRenderWindowInteractor::Initialize();
 }
 
 void

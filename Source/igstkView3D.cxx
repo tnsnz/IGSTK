@@ -18,6 +18,7 @@
 
 #include "vtkInteractorStyleTrackballCamera.h"
 #include "vtkWorldPointPicker.h"
+#include "vtkCellPicker.h"
 #include "qdebug.h"
 
 namespace igstk {
@@ -53,6 +54,11 @@ const CoordinateSystem* View3D::GetCoordinateSystemPublic() const
 	return this->GetCoordinateSystem();
 }
 
+void View3D::setPointRegMode(bool f)
+{
+	pointRegMode = f;
+}
+
 void View3D::SetPickedPointCoordinates(double x, double y)
 {
 	InitPickPointEvent initPickPointEvt;
@@ -60,36 +66,42 @@ void View3D::SetPickedPointCoordinates(double x, double y)
 
 	igstkLogMacro(DEBUG, "igstkView::SetPickedPointCoordinates() called ...\n");
 
-	auto pointPicker = GetPointPicker();
+	auto cellPicker = vtkSmartPointer<vtkCellPicker>::New();
+	cellPicker->SetTolerance(0.001);
+
 	auto renderer = GetRenderer();
 
-	pointPicker->Pick(x, y, 0, renderer);
+	if (cellPicker->Pick(x, y, 0, renderer))
+	{
+		double pickedPosition[3];
+		cellPicker->GetPickPosition(pickedPosition);
 
-	double data[3];
-	pointPicker->GetPickPosition(data);
+		Transform::VectorType pickedPoint;
+		pickedPoint[0] = pickedPosition[0];
+		pickedPoint[1] = pickedPosition[1];
+		pickedPoint[2] = pickedPosition[2];
 
-	Transform::VectorType pickedPoint;
-	pickedPoint[0] = data[0];
-	pickedPoint[1] = data[1];
-	pickedPoint[2] = data[2];
+		double validityTime = itk::NumericTraits<double>::max();
+		double errorValue = cellPicker->GetPickPosition()[2];
 
-	double validityTime = itk::NumericTraits<double>::max();
-	double errorValue = 1.0; // this should be obtained from 
-							 // the picked object.
+		Transform transform;
+		transform.SetTranslation(pickedPoint, errorValue, validityTime);
 
-	Transform transform;
-	transform.SetTranslation(pickedPoint, errorValue, validityTime);
+		CoordinateSystemTransformToResult transformCarrier;
 
-	CoordinateSystemTransformToResult transformCarrier;
+		transformCarrier.Initialize(transform,
+			this->GetPickerCoordSystem(),
+			this->GetCoordinateSystem());
 
-	transformCarrier.Initialize(transform,
-		this->GetPickerCoordSystem(),
-		this->GetCoordinateSystem());
+		CoordinateSystemTransformToEvent  transformEvent;
+		transformEvent.Set(transformCarrier);
 
-	CoordinateSystemTransformToEvent  transformEvent;
-	transformEvent.Set(transformCarrier);
-
-	this->InvokeEvent(transformEvent);
+		this->InvokeEvent(transformEvent);
+	}
+	else
+	{
+		igstkLogMacro(DEBUG, "Pick failed - no object found at the specified coordinates.\n");
+	}
 }
 
 

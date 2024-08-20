@@ -52,6 +52,8 @@ public:
   CoordinateSystem::Pointer GetPickerCoordSystemPublic() const;
   const CoordinateSystem* GetCoordinateSystemPublic() const;
 
+  void setPointRegMode(bool);
+
 protected:
   /** Constructor */
   View3D( );

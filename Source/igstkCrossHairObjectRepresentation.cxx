@@ -265,13 +265,13 @@ CrossHairObjectRepresentation
   const PointType& position = 
     m_CrossHairPositionObserver->GetCrossHairPosition();
 
-  m_LineSourceY->SetPoint1( position[0], m_ImageBounds[2], position[2] );
-  m_LineSourceY->SetPoint2( position[0], m_ImageBounds[3], position[2] );
-  m_LineSourceY->Update();
-
   m_LineSourceX->SetPoint1( m_ImageBounds[0], position[1], position[2] );
   m_LineSourceX->SetPoint2( m_ImageBounds[1], position[1], position[2] );
   m_LineSourceX->Update();
+
+  m_LineSourceY->SetPoint1(position[0], m_ImageBounds[2], position[2]);
+  m_LineSourceY->SetPoint2(position[0], m_ImageBounds[3], position[2]);
+  m_LineSourceY->Update();
 
   m_LineSourceZ->SetPoint1( position[0], position[1], m_ImageBounds[4] );
   m_LineSourceZ->SetPoint2( position[0], position[1], m_ImageBounds[5] );
