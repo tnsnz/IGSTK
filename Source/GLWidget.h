@@ -22,7 +22,6 @@ namespace igstk {
 	public:
 		typedef GLWidget Self;
 		typedef QVTKOpenGLNativeWidget Superclass;
-		typedef View ViewType;
 
 		igstkTypeMacro(GLWidget, QVTKOpenGLNativeWidget);
 		igstkStateMachineMacro();
@@ -34,7 +33,7 @@ namespace igstk {
 		GLWidget(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 		virtual ~GLWidget(void);
 
-		void RequestSetView(const ViewType*);
+		void RequestSetView(const View*);
 		typedef ViewProxy< GLWidget > ProxyType;
 		friend class ViewProxy< GLWidget >;
 		void RequestDisableInteractions();
@@ -47,6 +46,7 @@ namespace igstk {
 
 		void mouseReleaseEvent(QMouseEvent* e);
 		void mouseMoveEvent(QMouseEvent* e);
+		void magneticPicking(QMouseEvent* e);
 		void mouseDoubleClickEvent(QMouseEvent*);
 		void mousePressEvent(QMouseEvent* e);
 		void wheelEvent(QWheelEvent* e);
@@ -74,7 +74,7 @@ namespace igstk {
 		void SetRenderWindowInteractor(vtkRenderWindowInteractor* interactor);
 
 	private:
-		ViewType::Pointer view = nullptr;;
+		igstk::View* view = nullptr;;
 		ProxyType proxyView;
 		vtkRenderer* renderer = nullptr;
 		vtkRenderWindowInteractor* renderWindowInteractor = nullptr;

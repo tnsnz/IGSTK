@@ -16,10 +16,14 @@
 #include "igstkRenderWindowInteractor.h"   
 #include "igstkEvents.h"
 
+#include "igstkView2D.h"
+#include "igstkView3D.h"
+
 #include "GLWidget.h"
-#include <QBoxLayout>
-#include <QDebug>
+
 #include <QTimer>
+#include <QLayout>
+
 namespace igstk
 {
 	GLWidget::GLWidget(QWidget* qparent, Qt::WindowFlags f) :
@@ -28,7 +32,7 @@ namespace igstk
 		setAttribute(Qt::WA_AcceptTouchEvents);
 
 		this->m_Logger = nullptr;
-		this->view = ViewType::New();
+		this->view = View::New();
 
 		igstkAddInputMacro(ValidView);
 		igstkAddInputMacro(InValidView);
@@ -80,7 +84,7 @@ namespace igstk
 		return this->renderWindowInteractor;
 	}
 
-	void GLWidget::RequestSetView(const ViewType* view)
+	void GLWidget::RequestSetView(const View* view)
 	{
 		igstkLogMacro(DEBUG, "igstkGLWidget::RequestSetView called ...\n");
 
@@ -90,7 +94,7 @@ namespace igstk
 		}
 		else
 		{
-			this->view = const_cast<ViewType*>(view);
+			this->view = const_cast<View*>(view);
 			igstkPushInputMacro(ValidView);
 		}
 
@@ -247,64 +251,79 @@ namespace igstk
 	void GLWidget::mouseMoveEvent(QMouseEvent* e)
 	{
 		vtkRenderWindowInteractor* interactor = nullptr;
-		auto renWin = GetRenderWindow();
-		if (renWin)
+		do
 		{
-			interactor = renWin->GetInteractor();
-		}
-
-		if (!interactor || !interactor->GetEnabled() || !this->interactionHandling)
-		{
-			return;
-		}
-
-		if (touching)
-		{
-			ignorePinchGuide = true;
-		}
-
-		if (lastPressedEventId != vtkCommand::RightButtonPressEvent)
-		{
-			pinchGuideLabel->hide();
-		}
-
-		interactor->SetEventInformationFlipY(e->x(), e->y(),
-			(e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0,
-			(e->modifiers() & Qt::ShiftModifier) > 0 ? 1 : 0);
-
-		interactor->InvokeEvent(vtkCommand::MouseMoveEvent, e);
-
-		if (e->buttons() == Qt::LeftButton)
-		{
-
-		}
-
-		if (e->modifiers() & Qt::ShiftModifier) {
-			prevFocusedPoint = e->pos();
-
-			if (0 == frameSkipWeight % 5)
+			auto renWin = GetRenderWindow();
+			if (!renWin)
 			{
-				this->proxyView.SetPickedPointCoordinates(this->view, e->x(),
-					this->height() - e->y());
-
-				lastFocusedPoint = e->pos();
-
-				QTimer::singleShot
-				(0, [&]() -> void
-					{
-						if (lastFocusedPoint != prevFocusedPoint)
-						{
-							this->proxyView.SetPickedPointCoordinates(this->view, prevFocusedPoint.x(),
-								this->height() - prevFocusedPoint.y());
-						}
-
-						lastFocusedPoint = prevFocusedPoint;
-						frameSkipWeight = 0;
-					}
-				);
+				break;
 			}
-			frameSkipWeight = (frameSkipWeight % 5) + 1;
+
+			interactor = renWin->GetInteractor();
+
+			if (!interactor || !interactor->GetEnabled() || !this->interactionHandling)
+			{
+				break;
+			}
+
+			if (touching)
+			{
+				ignorePinchGuide = true;
+			}
+
+			if (lastPressedEventId != vtkCommand::RightButtonPressEvent)
+			{
+				pinchGuideLabel->hide();
+			}
+
+			auto view3DCond = (dynamic_cast<View3D*>(view) &&
+				(e->buttons() == Qt::RightButton || e->modifiers() == Qt::ShiftModifier));
+
+			auto view2DCond = (dynamic_cast<View2D*>(view) && e->modifiers() != Qt::ControlModifier &&
+				(e->modifiers() == Qt::ShiftModifier || e->buttons() == Qt::LeftButton));
+
+			if (!doubleClicked && (view2DCond || view3DCond))
+			{
+				magneticPicking(e);
+			}
+			else
+			{
+				interactor->SetEventInformationFlipY(e->x(), e->y(),
+					(e->modifiers() & Qt::ControlModifier) > 0 ? 1 : 0,
+					(e->modifiers() & Qt::ShiftModifier) > 0 ? 1 : 0);
+
+				interactor->InvokeEvent(vtkCommand::MouseMoveEvent, e);
+			}
+
+		} while (false);
+	}
+
+	void GLWidget::magneticPicking(QMouseEvent* e)
+	{
+		prevFocusedPoint = e->pos();
+
+		if (0 == frameSkipWeight % 5)
+		{
+			this->proxyView.SetPickedPointCoordinates(this->view, e->x(),
+				this->height() - e->y());
+
+			lastFocusedPoint = e->pos();
+
+			QTimer::singleShot
+			(0, [&]() -> void
+				{
+					if (lastFocusedPoint != prevFocusedPoint)
+					{
+						this->proxyView.SetPickedPointCoordinates(this->view, prevFocusedPoint.x(),
+							this->height() - prevFocusedPoint.y());
+					}
+
+					lastFocusedPoint = prevFocusedPoint;
+					frameSkipWeight = 0;
+				}
+			);
 		}
+		frameSkipWeight = (frameSkipWeight % 5) + 1;
 	}
 
 	void GLWidget::mouseDoubleClickEvent(QMouseEvent* e)
